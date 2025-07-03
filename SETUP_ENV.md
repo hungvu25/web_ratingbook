@@ -27,13 +27,7 @@ cp env.example .env
 Mở file `.env` và cập nhật thông tin database của bạn:
 
 ```env
-# Database Configuration
-DB_HOST=learnenglish-dental-st.b.aivencloud.com
-DB_PORT=13647
-DB_NAME=web_ratingbook
-DB_USER=avnadmin
-DB_PASS=AVNS_PABpPxTbYo7xMw3ictV
-DB_CHARSET=utf8mb4
+
 
 # Site Configuration
 SITE_NAME=BookReview
