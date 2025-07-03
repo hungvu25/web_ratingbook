@@ -11,11 +11,11 @@ echo "<h2>🔍 Test Kết Nối Database với Environment Variables</h2>";
 echo "<hr>";
 
 // Thông tin kết nối từ environment variables
-$host = env('DB_HOST', 'localhost');
+$host = env('DB_HOST');
 $port = env('DB_PORT', 3306);
-$dbname = env('DB_NAME', 'web_ratingbook');
-$user = env('DB_USER', 'root');
-$pass = env('DB_PASS', '');
+$dbname = env('DB_NAME');
+$user = env('DB_USER');
+$pass = env('DB_PASS');
 
 echo "<h3>📋 Thông tin kết nối:</h3>";
 echo "<ul>";
