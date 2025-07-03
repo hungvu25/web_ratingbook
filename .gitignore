@@ -1,0 +1,40 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Composer
+/vendor/
+composer.lock
+
+# Logs
+*.log
+error.log
+access.log
+
+# Database backups
+*.sql.backup
+*.dump
+
+# Upload files (optional - remove if you want to track uploads)
+uploads/*
+!uploads/default-cover.jpg
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp 

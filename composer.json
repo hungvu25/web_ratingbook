@@ -1,0 +1,16 @@
+{
+    "name": "bookreview/app",
+    "description": "Book Review Application",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "vlucas/phpdotenv": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+} 

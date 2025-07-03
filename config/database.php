@@ -1,31 +1,32 @@
 <?php
-// Cấu hình database cho hosting online
-// Thay đổi các thông tin này theo database của bạn
+// Load environment variables
+require_once __DIR__ . '/env.php';
 
-// Cấu hình database - Aiven Cloud
-define('DB_HOST', 'learnenglish-dental-st.b.aivencloud.com');
-define('DB_PORT', 13647);
-define('DB_NAME', 'web_ratingbook');
-define('DB_USER', 'avnadmin');
-define('DB_PASS', 'AVNS_PABpPxTbYo7xMw3ictV');
-define('DB_CHARSET', 'utf8mb4');
+// Cấu hình database từ environment variables
+define('DB_HOST', env('DB_HOST', 'localhost'));
+define('DB_PORT', env('DB_PORT', 3306));
+define('DB_NAME', env('DB_NAME', 'web_ratingbook'));
+define('DB_USER', env('DB_USER', 'root'));
+define('DB_PASS', env('DB_PASS', ''));
+define('DB_CHARSET', env('DB_CHARSET', 'utf8mb4'));
 
 // Cấu hình site
-define('SITE_NAME', 'BookReview');
-define('SITE_URL', 'https://yourdomain.com'); // URL website của bạn
-define('SITE_DESCRIPTION', 'Đánh giá và chia sẻ những cuốn sách tuyệt vời nhất');
+define('SITE_NAME', env('SITE_NAME', 'BookReview'));
+define('SITE_URL', env('SITE_URL', 'http://localhost')); 
+define('SITE_DESCRIPTION', env('SITE_DESCRIPTION', 'Đánh giá và chia sẻ những cuốn sách tuyệt vời nhất'));
 
-// Error reporting (tắt trên production)
-if ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') {
+// Environment
+define('ENVIRONMENT', env('ENVIRONMENT', 'development'));
+
+// Error reporting
+if (ENVIRONMENT === 'development' || $_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') {
     // Development environment
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
-    define('ENVIRONMENT', 'development');
 } else {
     // Production environment
     error_reporting(0);
     ini_set('display_errors', 0);
-    define('ENVIRONMENT', 'production');
 }
 
 // Timezone
@@ -67,13 +68,13 @@ function testDatabaseConnection() {
 // Security configurations
 if (ENVIRONMENT === 'production') {
     // Bảo mật cho production
-    ini_set('session.cookie_httponly', 1);
-    ini_set('session.cookie_secure', 1);
+    ini_set('session.cookie_httponly', env('SESSION_HTTPONLY', true));
+    ini_set('session.cookie_secure', env('SESSION_SECURE', false));
     ini_set('session.use_only_cookies', 1);
 }
 
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// Start session - chỉ khi cần thiết, không tự động
+// if (session_status() === PHP_SESSION_NONE) {
+//     session_start();
+// }
 ?>

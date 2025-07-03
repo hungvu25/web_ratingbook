@@ -1,18 +1,21 @@
 <?php
-// Test kết nối database Aiven Cloud
+// Test kết nối database với Environment Variables
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-echo "<h2>🔍 Test Kết Nối Database Aiven Cloud</h2>";
+// Load environment variables
+require_once __DIR__ . '/env.php';
+
+echo "<h2>🔍 Test Kết Nối Database với Environment Variables</h2>";
 echo "<hr>";
 
-// Thông tin kết nối
-$host = "learnenglish-dental-st.b.aivencloud.com";
-$port = 13647;
-$dbname = "web_ratingbook";
-$user = "avnadmin";
-$pass = "AVNS_PABpPxTbYo7xMw3ictV";
+// Thông tin kết nối từ environment variables
+$host = env('DB_HOST', 'localhost');
+$port = env('DB_PORT', 3306);
+$dbname = env('DB_NAME', 'web_ratingbook');
+$user = env('DB_USER', 'root');
+$pass = env('DB_PASS', '');
 
 echo "<h3>📋 Thông tin kết nối:</h3>";
 echo "<ul>";
@@ -20,16 +23,29 @@ echo "<li><strong>Host:</strong> $host</li>";
 echo "<li><strong>Port:</strong> $port</li>";
 echo "<li><strong>Database:</strong> $dbname</li>";
 echo "<li><strong>Username:</strong> $user</li>";
-echo "<li><strong>Password:</strong> " . str_repeat('*', strlen($pass)) . "</li>";
+echo "<li><strong>Password:</strong> " . ($pass ? str_repeat('*', min(strlen($pass), 10)) : 'No password') . "</li>";
+echo "<li><strong>Environment:</strong> " . env('ENVIRONMENT', 'development') . "</li>";
 echo "</ul>";
+
+// Kiểm tra nếu .env file tồn tại
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    echo "<div style='background: #d1ecf1; border: 1px solid #bee5eb; padding: 10px; border-radius: 5px; margin: 10px 0;'>";
+    echo "✅ <strong>File .env đã được tìm thấy và load thành công!</strong>";
+    echo "</div>";
+} else {
+    echo "<div style='background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; border-radius: 5px; margin: 10px 0;'>";
+    echo "⚠️ <strong>File .env không tồn tại.</strong> Đang sử dụng default values hoặc system environment variables.";
+    echo "</div>";
+}
 
 echo "<h3>🔌 Kiểm tra kết nối:</h3>";
 
 try {
-    // Tạo DSN cho Aiven Cloud
+    // Tạo DSN
     $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
     
-    // Cấu hình PDO với SSL
+    // Cấu hình PDO với SSL (nếu cần cho cloud database)
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -136,8 +152,8 @@ try {
     
     echo "<h3>🎉 Kết luận:</h3>";
     echo "<div style='background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px;'>";
-    echo "<strong style='color: #155724;'>✅ Database đã sẵn sàng sử dụng!</strong><br>";
-    echo "Bạn có thể sử dụng website bình thường. Nếu chưa có dữ liệu, hãy chạy file <code>aiven_schema.sql</code>";
+    echo "<strong style='color: #155724;'>✅ Database đã sẵn sàng sử dụng với Environment Variables!</strong><br>";
+    echo "Thông tin nhạy cảm đã được bảo vệ và không còn hard-code trong source code.";
     echo "</div>";
     
 } catch (PDOException $e) {
@@ -149,13 +165,24 @@ try {
     
     echo "<h3>🔧 Cách khắc phục:</h3>";
     echo "<ol>";
-    echo "<li>Kiểm tra thông tin kết nối (host, port, database, username, password)</li>";
-    echo "<li>Đảm bảo database đã được tạo trên Aiven</li>";
-    echo "<li>Kiểm tra firewall/IP whitelist trên Aiven</li>";
+    echo "<li>Kiểm tra file .env có đúng thông tin database không</li>";
+    echo "<li>Đảm bảo database đã được tạo</li>";
+    echo "<li>Kiểm tra firewall/IP whitelist (nếu dùng cloud database)</li>";
     echo "<li>Kiểm tra SSL certificate settings</li>";
     echo "</ol>";
 }
 
 echo "<hr>";
-echo "<p><a href='index.php'>🏠 Về trang chủ</a> | <a href='config/database.php'>⚙️ Xem config</a></p>";
+echo "<h3>📝 Hướng dẫn sử dụng Environment Variables:</h3>";
+echo "<div style='background: #e2e3e5; border: 1px solid #d6d8db; padding: 15px; border-radius: 5px;'>";
+echo "<ol>";
+echo "<li>Tạo file <code>.env</code> từ file <code>env.example</code></li>";
+echo "<li>Cập nhật thông tin database trong file <code>.env</code></li>";
+echo "<li>File <code>.env</code> sẽ không được push lên Git (đã có trong .gitignore)</li>";
+echo "<li>Trên server production, tạo file <code>.env</code> với thông tin thật</li>";
+echo "</ol>";
+echo "</div>";
+
+echo "<hr>";
+echo "<p><a href='../index.php'>🏠 Về trang chủ</a> | <a href='database.php'>⚙️ Xem config</a></p>";
 ?> 
