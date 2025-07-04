@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font & Icon Test - InfinityFree Hosting Complete</title>
+    
+    <!-- Preload DNS -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    
+    <!-- CRITICAL: Local Fonts FIRST -->
+    <link href="assets/css/local-fonts.css" rel="stylesheet">
+    
+    <!-- Font Awesome Local Fallback -->
+    <link href="assets/css/fontawesome-local.css" rel="stylesheet">
+    
+    <!-- Font Fallback System -->
+    <link href="assets/css/font-fallback.css" rel="stylesheet">
+    
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome CDN với fallback -->
+    <link id="fontawesome-cdn" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <style>
+        /* Critical inline styles */
+        *, *::before, *::after {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Arial', sans-serif !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        body {
+            padding: 2rem;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .status-loading { background: linear-gradient(45deg, #ffc107, #ff9800); }
+        .status-loaded { background: linear-gradient(45deg, #28a745, #20c997); }
+        .status-fallback { background: linear-gradient(45deg, #dc3545, #e74c3c); }
+        
+        .font-test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .icon-test {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .icon-test:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .icon-test i {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .performance-metrics {
+            background: #e3f2fd;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .hosting-info {
+            background: #fff3e0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .debug-panel {
+            background: #f3e5f5;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #9c27b0;
+            font-family: 'Courier New', monospace !important;
+            font-size: 0.9rem;
+        }
+        
+        .test-passed {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .test-failed {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+    
+    <!-- Enhanced Font Handler -->
+    <script>
+        // Immediate setup
+        document.documentElement.style.fontFamily = "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Arial', sans-serif";
+        document.documentElement.style.visibility = 'visible';
+        document.documentElement.style.opacity = '1';
+        
+        // Performance tracking
+        window.fontLoadingMetrics = {
+            startTime: performance.now(),
+            localPoppinsTime: null,
+            googleFontsTime: null,
+            fontAwesomeTime: null,
+            totalTime: null
+        };
+        
+        // CDN Status checker
+        window.checkAllCDNStatus = function() {
+            const results = {
+                fontAwesome: false,
+                bootstrap: false,
+                hosting: 'unknown'
+            };
+            
+            // Check Font Awesome
+            const testIcon = document.createElement('i');
+            testIcon.className = 'fas fa-home';
+            testIcon.style.position = 'absolute';
+            testIcon.style.left = '-9999px';
+            document.body.appendChild(testIcon);
+            
+            const iconWidth = testIcon.offsetWidth;
+            document.body.removeChild(testIcon);
+            results.fontAwesome = iconWidth > 8;
+            
+            // Detect hosting
+            const hostname = window.location.hostname;
+            if (hostname.includes('infinityfree') || hostname.includes('000webhostapp')) {
+                results.hosting = 'infinityfree';
+            } else if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+                results.hosting = 'localhost';
+            } else {
+                results.hosting = 'other';
+            }
+            
+            return results;
+        };
+    </script>
+    <script src="assets/js/font-handler.js" defer></script>
+</head>
+<body class="font-loading">
+    <!-- Status Indicator -->
+    <div id="fontStatus" class="status-indicator status-loading pulse">
+        <i class="fas fa-spinner fa-spin me-2"></i>Initializing...
+    </div>
+
+    <div class="container-fluid">
+        <div class="text-center mb-5">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-font me-3"></i>
+                Font & Icon System Test
+            </h1>
+            <p class="lead">Complete testing suite for InfinityFree hosting compatibility</p>
+        </div>
+        
+        <!-- Hosting Environment Info -->
+        <div class="test-section hosting-info">
+            <h3><i class="fas fa-server me-2"></i>Hosting Environment</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Current URL:</strong> <span id="currentUrl">Loading...</span></p>
+                    <p><strong>Hosting Type:</strong> <span id="hostingType">Detecting...</span></p>
+                    <p><strong>User Agent:</strong> <span id="userAgent">Loading...</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Network Type:</strong> <span id="networkType">Unknown</span></p>
+                    <p><strong>Connection Speed:</strong> <span id="connectionSpeed">Unknown</span></p>
+                    <p><strong>Browser:</strong> <span id="browserInfo">Loading...</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Font Tests -->
+        <div class="test-section">
+            <h3><i class="fas fa-text-height me-2"></i>Font System Tests</h3>
+            
+            <div class="font-test-grid">
+                <!-- Poppins Test -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-font me-2"></i>Poppins Font Test</h5>
+                    </div>
+                    <div class="card-body">
+                        <div style="font-family: 'Poppins', sans-serif; font-size: 18px;">
+                            <p><strong>Regular:</strong> The quick brown fox jumps over the lazy dog</p>
+                            <p><strong style="font-weight: 500;">Medium:</strong> Chữ tiếng Việt có dấu: àáâãäăåąćčđ</p>
+                            <p><strong style="font-weight: 600;">SemiBold:</strong> Numbers: 0123456789</p>
+                            <p><strong style="font-weight: 700;">Bold:</strong> Special: @#$%^&*()[]{}|</p>
+                        </div>
+                        <div class="mt-3">
+                            <strong>Status:</strong> <span id="poppinsStatus" class="test-failed">Testing...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fallback Test -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-shield-alt me-2"></i>Fallback Fonts Test</h5>
+                    </div>
+                    <div class="card-body">
+                        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 16px;">
+                            <p><strong>System Font:</strong> This text uses system fonts</p>
+                            <p>Đây là văn bản tiếng Việt với font hệ thống</p>
+                        </div>
+                        <div style="font-family: Arial, sans-serif; font-size: 16px;">
+                            <p><strong>Arial Fallback:</strong> Emergency fallback text</p>
+                            <p>Văn bản dự phòng với Arial</p>
+                        </div>
+                        <div class="mt-3">
+                            <strong>Status:</strong> <span class="test-passed">Always Available</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Icon Tests -->
+        <div class="test-section">
+            <h3><i class="fas fa-icons me-2"></i>Icon System Tests</h3>
+            
+            <div class="icon-grid">
+                <div class="icon-test">
+                    <i class="fas fa-home"></i>
+                    <div>fa-home</div>
+                </div>
+                <div class="icon-test">
+                    <i class="fas fa-book"></i>
+                    <div>fa-book</div>
+                </div>
+                <div class="icon-test">
+                    <i class="fas fa-star"></i>
+                    <div>fa-star</div>
+                </div>
+                <div class="icon-test">
+                    <i class="fas fa-user"></i>
+                    <div>fa-user</div>
+                </div>
+                <div class="icon-test">
+                    <i class="fas fa-search"></i>
+                    <div>fa-search</div>
+                </div>
+                <div class="icon-test">
+                    <i class="fas fa-cog"></i>
+                    <div>fa-cog</div>
+                </div>
+                <div class="icon-test">
+                    <i class="fas fa-heart"></i>
+                    <div>fa-heart</div>
+                </div>
+                <div class="icon-test">
+                    <i class="fas fa-download"></i>
+                    <div>fa-download</div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h5>Icon System Status</h5>
+                <p><strong>Font Awesome CDN:</strong> <span id="faStatus" class="test-failed">Testing...</span></p>
+                <p><strong>Local Fallback:</strong> <span id="faLocalStatus" class="test-passed">Available</span></p>
+                <p><strong>Emergency Fallback:</strong> <span class="test-passed">Text/Emoji Ready</span></p>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="test-section performance-metrics">
+            <h3><i class="fas fa-tachometer-alt me-2"></i>Performance Metrics</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Local Font Check:</strong> <span id="localFontTime">Measuring...</span></p>
+                    <p><strong>Google Fonts Load:</strong> <span id="googleFontTime">Measuring...</span></p>
+                    <p><strong>Font Awesome Load:</strong> <span id="faLoadTime">Measuring...</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Total Load Time:</strong> <span id="totalLoadTime">Measuring...</span></p>
+                    <p><strong>FOUT Duration:</strong> <span id="foutDuration">Measuring...</span></p>
+                    <p><strong>Performance Score:</strong> <span id="performanceScore">Calculating...</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Panel -->
+        <div class="test-section debug-panel">
+            <h3><i class="fas fa-bug me-2"></i>Debug Information</h3>
+            <div id="debugOutput">
+                <p>Font Handler State: Loading...</p>
+                <p>Debug console messages will appear here...</p>
+            </div>
+            
+            <div class="mt-3">
+                <button class="btn btn-primary me-2" onclick="runFullTest()">
+                    <i class="fas fa-play me-1"></i>Run Full Test
+                </button>
+                <button class="btn btn-warning me-2" onclick="forceFallback()">
+                    <i class="fas fa-shield-alt me-1"></i>Force Fallback
+                </button>
+                <button class="btn btn-info me-2" onclick="reinitializeFonts()">
+                    <i class="fas fa-redo me-1"></i>Reinitialize
+                </button>
+                <button class="btn btn-success" onclick="exportResults()">
+                    <i class="fas fa-download me-1"></i>Export Results
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Scripts -->
+    <script>
+        // Update environmental info
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('currentUrl').textContent = window.location.href;
+            document.getElementById('userAgent').textContent = navigator.userAgent.substring(0, 100) + '...';
+            document.getElementById('browserInfo').textContent = `${navigator.appName} ${navigator.appVersion.substring(0, 50)}...`;
+            
+            // Network info
+            if ('connection' in navigator) {
+                const conn = navigator.connection;
+                document.getElementById('networkType').textContent = conn.effectiveType || 'Unknown';
+                document.getElementById('connectionSpeed').textContent = conn.downlink ? `${conn.downlink} Mbps` : 'Unknown';
+            }
+            
+            // Hosting detection
+            const results = checkAllCDNStatus();
+            document.getElementById('hostingType').textContent = results.hosting;
+            
+            // Start monitoring
+            startMonitoring();
+        });
+        
+        function startMonitoring() {
+            let checkCount = 0;
+            const maxChecks = 50;
+            
+            const monitor = setInterval(() => {
+                checkCount++;
+                updateStatus();
+                
+                if (checkCount >= maxChecks || 
+                    (window.FontHandler && window.FontHandler.state.poppinsLoaded)) {
+                    clearInterval(monitor);
+                    finalizeResults();
+                }
+            }, 200);
+        }
+        
+        function updateStatus() {
+            if (window.FontHandler && window.FontHandler.state) {
+                const state = window.FontHandler.state;
+                
+                // Update Poppins status
+                if (state.poppinsLoaded || state.poppinsLocal) {
+                    document.getElementById('poppinsStatus').textContent = 'Working';
+                    document.getElementById('poppinsStatus').className = 'test-passed';
+                } else {
+                    document.getElementById('poppinsStatus').textContent = 'Failed - Using Fallback';
+                    document.getElementById('poppinsStatus').className = 'test-failed';
+                }
+                
+                // Update Font Awesome status
+                const faResults = checkAllCDNStatus();
+                if (faResults.fontAwesome) {
+                    document.getElementById('faStatus').textContent = 'CDN Working';
+                    document.getElementById('faStatus').className = 'test-passed';
+                } else {
+                    document.getElementById('faStatus').textContent = 'CDN Failed - Using Local';
+                    document.getElementById('faStatus').className = 'test-failed';
+                }
+                
+                // Update debug info
+                updateDebugInfo(state);
+            }
+        }
+        
+        function updateDebugInfo(state) {
+            const debug = document.getElementById('debugOutput');
+            debug.innerHTML = `
+                <p><strong>Font Handler State:</strong></p>
+                <p>• Poppins Local: ${state.poppinsLocal ? 'Yes' : 'No'}</p>
+                <p>• Poppins Loaded: ${state.poppinsLoaded ? 'Yes' : 'No'}</p>
+                <p>• Font Awesome: ${state.fontAwesome ? 'Yes' : 'No'}</p>
+                <p>• Fallback Active: ${state.fallbackActive ? 'Yes' : 'No'}</p>
+                <p>• Infinity Hosting: ${state.isInfinityHosting ? 'Yes' : 'No'}</p>
+                <p><strong>CSS Classes:</strong> ${document.documentElement.className}</p>
+                <p><strong>Body Classes:</strong> ${document.body.className}</p>
+            `;
+        }
+        
+        function finalizeResults() {
+            window.fontLoadingMetrics.totalTime = performance.now() - window.fontLoadingMetrics.startTime;
+            
+            // Update performance metrics
+            document.getElementById('totalLoadTime').textContent = 
+                Math.round(window.fontLoadingMetrics.totalTime) + 'ms';
+            
+            // Calculate performance score
+            const totalTime = window.fontLoadingMetrics.totalTime;
+            let score = 'Excellent';
+            if (totalTime > 3000) score = 'Poor';
+            else if (totalTime > 1500) score = 'Good';
+            else if (totalTime > 1000) score = 'Very Good';
+            
+            document.getElementById('performanceScore').textContent = score;
+        }
+        
+        function runFullTest() {
+            console.log('🧪 Running full font and icon test...');
+            if (window.FontHandler) {
+                window.FontHandler.reinitialize();
+            }
+            startMonitoring();
+        }
+        
+        function forceFallback() {
+            console.log('⚠️ Forcing fallback mode...');
+            if (window.FontHandler) {
+                window.FontHandler.applyFallback();
+                window.FontHandler.applyIconFallback();
+            }
+            updateStatus();
+        }
+        
+        function reinitializeFonts() {
+            console.log('🔄 Reinitializing font system...');
+            location.reload();
+        }
+        
+        function exportResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+                fontState: window.FontHandler ? window.FontHandler.state : null,
+                performance: window.fontLoadingMetrics,
+                cdnStatus: checkAllCDNStatus()
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `font-test-results-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Event listeners for font loading
+        window.addEventListener('fontFallbackActivated', function(e) {
+            console.log('🔔 Font fallback activated', e.detail);
+            updateStatus();
+        });
+        
+        // Listen for all error events
+        window.addEventListener('error', function(e) {
+            console.error('❌ Error detected:', e.message);
+        });
+    </script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
