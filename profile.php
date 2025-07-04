@@ -14,12 +14,36 @@ $user = getCurrentUser();
 
 // Xử lý cập nhật thông tin
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name']);
-    $current_password = $_POST['current_password'];
-    $new_password = $_POST['new_password'];
-    $confirm_password = $_POST['confirm_password'];
-    
+    $action = $_POST['action'] ?? 'update_profile';
     $errors = [];
+    
+    if ($action === 'upload_avatar') {
+        // Xử lý upload avatar
+        if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+            $imageName = 'avatar_' . $user['id'] . '_' . time();
+            $uploadResult = processAvatarUpload($_FILES['avatar'], $imageName);
+            
+            if ($uploadResult['success']) {
+                // Cập nhật avatar URL vào database
+                if (updateUserAvatar($user['id'], $uploadResult['url'])) {
+                    setMessage('success', 'Cập nhật avatar thành công!');
+                    header('Location: profile.php');
+                    exit;
+                } else {
+                    $errors[] = 'Lỗi khi lưu avatar vào database';
+                }
+            } else {
+                $errors[] = $uploadResult['error'];
+            }
+        } else {
+            $errors[] = 'Vui lòng chọn file ảnh để upload';
+        }
+    } else {
+        // Xử lý cập nhật thông tin cá nhân
+        $name = trim($_POST['name']);
+        $current_password = $_POST['current_password'];
+        $new_password = $_POST['new_password'];
+        $confirm_password = $_POST['confirm_password'];
     
     if (empty($name)) {
         $errors[] = 'Tên không được để trống';
@@ -53,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         setMessage('success', 'Cập nhật thông tin thành công!');
         header('Location: profile.php');
         exit;
+        }
     }
 }
 
@@ -69,10 +94,43 @@ $user_reviews = $stmt->fetchAll();
 
 include 'includes/header.php';
 ?>
-
+<!-- Modern styles are already included in header.php -->
 <div class="container py-5">
     <div class="row">
         <div class="col-lg-8">
+            <!-- Avatar Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-camera me-2"></i>Ảnh đại diện</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <img src="<?php echo getUserAvatar($user); ?>" 
+                                 alt="Avatar" 
+                                 class="rounded-circle" 
+                                 style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #dee2e6;">
+                        </div>
+                        <div class="col-md-9">
+                            <form method="POST" enctype="multipart/form-data" id="avatarForm">
+                                <input type="hidden" name="action" value="upload_avatar">
+                                <div class="mb-3">
+                                    <label for="avatar" class="form-label">Chọn ảnh mới</label>
+                                    <input type="file" class="form-control" id="avatar" name="avatar" 
+                                           accept="image/*" required>
+                                    <div class="form-text">
+                                        Định dạng: JPG, PNG, GIF, WEBP. Kích thước tối đa: 16MB
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-upload me-2"></i>Cập nhật Avatar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Thông tin hồ sơ -->
             <div class="card shadow-sm">
                 <div class="card-header">
@@ -90,6 +148,7 @@ include 'includes/header.php';
                     <?php endif; ?>
                     
                     <form method="POST" action="">
+                        <input type="hidden" name="action" value="update_profile">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -263,5 +322,72 @@ include 'includes/header.php';
         </div>
     </div>
 </div>
+
+<!-- Avatar Upload JavaScript -->
+<script>
+document.getElementById('avatar').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Vui lòng chọn file ảnh hợp lệ (JPG, PNG, GIF, WEBP)');
+            e.target.value = '';
+            return;
+        }
+        
+        // Validate file size (16MB)
+        if (file.size > 16 * 1024 * 1024) {
+            alert('File quá lớn. Kích thước tối đa là 16MB');
+            e.target.value = '';
+            return;
+        }
+        
+        // Preview image
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const avatarImg = document.querySelector('.col-md-3 img');
+            avatarImg.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Form submission with loading state
+document.getElementById('avatarForm').addEventListener('submit', function() {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang upload...';
+    
+    // Re-enable button after 30 seconds as fallback
+    setTimeout(function() {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }, 30000);
+});
+
+// Password confirmation validation
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const password = document.getElementById('new_password').value;
+    const confirmPassword = this.value;
+    
+    if (password !== confirmPassword && confirmPassword.length > 0) {
+        this.classList.add('is-invalid');
+        this.classList.remove('is-valid');
+    } else if (confirmPassword.length > 0) {
+        this.classList.add('is-valid');
+        this.classList.remove('is-invalid');
+    }
+});
+
+document.getElementById('new_password').addEventListener('input', function() {
+    const confirmPassword = document.getElementById('confirm_password');
+    if (confirmPassword.value.length > 0) {
+        confirmPassword.dispatchEvent(new Event('input'));
+    }
+});
+</script>
 
 <?php include 'includes/footer.php'; ?> 

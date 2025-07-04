@@ -1,30 +1,71 @@
 <?php
-// Load environment variables
-require_once __DIR__ . '/env.php';
+/**
+ * Database Configuration
+ * Direct configuration without environment variables
+ */
 
-// Cấu hình database từ environment variables
-define('DB_HOST', env('DB_HOST'));
-define('DB_PORT', env('DB_PORT', 3306));
-define('DB_NAME', env('DB_NAME'));
-define('DB_USER', env('DB_USER'));
-define('DB_PASS', env('DB_PASS'));
-define('DB_CHARSET', env('DB_CHARSET'));
+// Database configuration - Auto-detect environment
+if (isset($_SERVER['HTTP_HOST'])) {
+    $host = $_SERVER['HTTP_HOST'];
+    
+    if ($host === 'localhost' || strpos($host, '127.0.0.1') !== false || strpos($host, 'localhost:') !== false) {
+        // Local development configuration
+        define('DB_HOST', 'localhost');
+        define('DB_PORT', 3306);
+        define('DB_NAME', 'web_ratingbook'); // Local database name
+        define('DB_USER', 'root');
+        define('DB_PASS', ''); // XAMPP default
+        define('DB_CHARSET', 'utf8mb4');
+        if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'development');
+    } else {
+        // InfinityFree production configuration
+        define('DB_HOST', 'sql106.infinityfree.com');
+        define('DB_PORT', 3306);
+        define('DB_NAME', 'if0_39381228_webbook');
+        define('DB_USER', 'if0_39381228');
+        define('DB_PASS', 'oi14KDGIotsJiP');
+        define('DB_CHARSET', 'utf8');
+        if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'production');
+    }
+} else {
+    // Fallback - assume production
+    define('DB_HOST', 'sql106.infinityfree.com');
+    define('DB_PORT', 3306);
+    define('DB_NAME', 'if0_39381228_webbook');
+    define('DB_USER', 'if0_39381228');
+    define('DB_PASS', 'oi14KDGIotsJiP');
+    define('DB_CHARSET', 'utf8');
+    if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'production');
+}
 
-// Cấu hình site
-define('SITE_NAME', env('SITE_NAME', 'BookReview'));
-define('SITE_URL', env('SITE_URL', 'http://localhost')); 
-define('SITE_DESCRIPTION', env('SITE_DESCRIPTION', 'Đánh giá và chia sẻ những cuốn sách tuyệt vời nhất'));
+// Site configuration for InfinityFree
+define('SITE_NAME', 'BookReview');
 
-// Environment
-define('ENVIRONMENT', env('ENVIRONMENT', 'development'));
+// Auto-detect SITE_URL based on server
+if (isset($_SERVER['HTTP_HOST'])) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    
+    if ($host === 'localhost' || strpos($host, '127.0.0.1') !== false || strpos($host, 'localhost:') !== false) {
+        define('SITE_URL', 'http://localhost/');
+        if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'development');
+    } else {
+        define('SITE_URL', 'https://sachzone.infy.uk/');
+        if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'production');
+    }
+} else {
+    // Fallback for command line or other contexts
+    define('SITE_URL', 'https://sachzone.infy.uk/');
+    if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'production');
+}
+
+define('SITE_DESCRIPTION', 'Đánh giá và chia sẻ những cuốn sách tuyệt vời nhất');
 
 // Error reporting
-if (ENVIRONMENT === 'development' || $_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') {
-    // Development environment
+if (ENVIRONMENT === 'development') {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 } else {
-    // Production environment
     error_reporting(0);
     ini_set('display_errors', 0);
 }
@@ -32,49 +73,45 @@ if (ENVIRONMENT === 'development' || $_SERVER['HTTP_HOST'] === 'localhost' || $_
 // Timezone
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-// Kết nối database sử dụng PDO với SSL cho Aiven Cloud
+// Database connection for InfinityFree
+$pdo = null;
+
 try {
-    $dsn = "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+    // Thử kết nối đơn giản hơn
+    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME;
+    
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . DB_CHARSET,
-        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-        PDO::MYSQL_ATTR_SSL_CA => false
+        PDO::ATTR_TIMEOUT => 60, // Tăng timeout lên 60s
     ];
     
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
     
+    // Set charset sau khi kết nối
+    $pdo->exec("SET NAMES utf8");
+    
+    define('DB_CONNECTION_TYPE', 'infinityfree');
+    
 } catch (PDOException $e) {
+    // Error handling với thông tin chi tiết
     if (ENVIRONMENT === 'development') {
-        die("Database connection failed: " . $e->getMessage());
+        die("Database connection failed: " . $e->getMessage() . "<br>DSN: " . $dsn . "<br>User: " . DB_USER . "<br>Host: " . DB_HOST);
     } else {
         die("Database connection failed. Please try again later.");
     }
 }
 
-// Hàm kiểm tra kết nối
+// Test connection function
 function testDatabaseConnection() {
     global $pdo;
     try {
-        $stmt = $pdo->query("SELECT 1");
+        $stmt = $pdo->query("SELECT 1 as test");
         return true;
     } catch (PDOException $e) {
         return false;
     }
 }
 
-// Security configurations
-if (ENVIRONMENT === 'production') {
-    // Bảo mật cho production
-    ini_set('session.cookie_httponly', env('SESSION_HTTPONLY', true));
-    ini_set('session.cookie_secure', env('SESSION_SECURE', false));
-    ini_set('session.use_only_cookies', 1);
-}
-
-// Start session - chỉ khi cần thiết, không tự động
-// if (session_status() === PHP_SESSION_NONE) {
-//     session_start();
-// }
 ?>

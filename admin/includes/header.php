@@ -5,147 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($page_title) ? htmlspecialchars($page_title) . ' - Admin - ' . SITE_NAME : 'Admin - ' . SITE_NAME; ?></title>
     
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Fallback CSS - Load first for immediate fallback -->
+    <link href="../assets/css/font-fallback.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Admin Custom CSS -->
-    <link href="assets/css/admin.css" rel="stylesheet">
+    <link href="assets/css/admin.css?v=<?php echo time(); ?>" rel="stylesheet">
     
+    <!-- Critical inline styles for immediate rendering -->
     <style>
+        /* Critical font styling to prevent FOUT */
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fc;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
+            font-display: swap;
         }
         
-        .sidebar {
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            z-index: 1000;
-            transition: all 0.3s;
+        /* Loading state styling */
+        .font-loading body {
+            visibility: hidden;
+        }
+        
+        .font-loaded body,
+        .font-fallback body {
+            visibility: visible;
+        }
+        
+        /* Ensure proper layout even during font loading */
+        .main-content .container-fluid {
+            padding: 2.5rem 3rem !important;
+            box-sizing: border-box !important;
         }
         
         .main-content {
-            margin-left: 250px;
-            transition: all 0.3s;
-            min-height: 100vh;
-            width: calc(100% - 250px);
+            margin-left: 260px !important;
+            transition: all 0.3s ease;
         }
         
-        .navbar-brand {
-            color: white !important;
-            font-weight: 700;
-            text-decoration: none;
-        }
-        
-        .nav-link {
-            color: rgba(255,255,255,0.8) !important;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin: 2px 10px;
-            transition: all 0.3s;
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            background-color: rgba(255,255,255,0.1);
-            color: white !important;
-        }
-        
-        .nav-link i {
-            width: 20px;
-            margin-right: 10px;
-        }
-        
-        .top-navbar {
-            background: white;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-            padding: 1rem 1.5rem;
-        }
-        
-        .card {
-            border: none;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-            margin-bottom: 1.5rem;
-        }
-        
-        .text-gray-800 {
-            color: #5a5c69 !important;
-        }
-        
-        .text-gray-300 {
-            color: #dddfeb !important;
-        }
-        
-        .font-weight-bold {
-            font-weight: 700 !important;
-        }
-        
-        .text-xs {
-            font-size: 0.7rem;
-        }
-        
-        .border-left-primary {
-            border-left: 0.25rem solid #4e73df !important;
-        }
-        
-        .border-left-success {
-            border-left: 0.25rem solid #1cc88a !important;
-        }
-        
-        .border-left-warning {
-            border-left: 0.25rem solid #f6c23e !important;
-        }
-        
-        .border-left-info {
-            border-left: 0.25rem solid #36b9cc !important;
-        }
-        
-        .text-primary {
-            color: #4e73df !important;
-        }
-        
-        .text-success {
-            color: #1cc88a !important;
-        }
-        
-        .text-warning {
-            color: #f6c23e !important;
-        }
-        
-        .text-info {
-            color: #36b9cc !important;
-        }
-        
-        .content-wrapper {
-            padding: 0;
-        }
-        
+        /* Mobile responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                margin-left: -250px;
-            }
-            
-            .sidebar.show {
-                margin-left: 0;
-            }
-            
             .main-content {
-                margin-left: 0;
-                width: 100%;
+                margin-left: 0 !important;
+            }
+            
+            .main-content .container-fluid {
+                padding: 1.5rem 1rem !important;
+            }
+        }
+        
+        /* Enhanced animations */
+        .card {
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
+    
+    <!-- Smart Font Handler -->
+    <script src="../assets/js/font-handler.js?v=<?php echo time(); ?>" defer></script>
 </head>
-<body>
+<body class="font-loading">
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="p-4">
@@ -192,7 +130,7 @@
             </li>
             
             <li class="nav-item">
-                <a href="../add-book.php" class="nav-link">
+                <a href="add-book.php" class="nav-link">
                     <i class="fas fa-plus-circle"></i>
                     Thêm sách mới
                 </a>

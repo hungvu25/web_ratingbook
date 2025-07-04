@@ -37,11 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $verificationToken = bin2hex(random_bytes(32));
                 
                 $stmt = $pdo->prepare("
-                    INSERT INTO users (username, email, password, full_name, verification_token, created_at) 
-                    VALUES (?, ?, ?, ?, ?, NOW())
+                    INSERT INTO users (username, name, full_name, email, password, verification_token, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, NOW())
                 ");
                 
-                if ($stmt->execute([$username, $email, $hashedPassword, $full_name, $verificationToken])) {
+                if ($stmt->execute([$username, $full_name, $full_name, $email, $hashedPassword, $verificationToken])) {
                     $success = 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.';
                     
                     // Log activity

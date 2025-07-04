@@ -1,0 +1,155 @@
+/* Font Fallback CSS - Đảm bảo font hiển thị tốt trên mọi hosting */
+
+/* Primary font stack with comprehensive fallbacks */
+:root {
+    --font-primary: 'Poppins', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Arial', sans-serif;
+    --font-fallback: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif;
+}
+
+/* Immediate fallback - apply before page loads */
+body, * {
+    font-family: var(--font-fallback) !important;
+}
+
+/* Apply Poppins when available */
+.poppins-loaded body,
+.poppins-loaded * {
+    font-family: var(--font-primary) !important;
+}
+
+/* Enhanced fallback for when Google Fonts fail completely */
+.font-fallback,
+.font-fallback *,
+body.font-fallback,
+body.font-fallback * {
+    font-family: var(--font-fallback) !important;
+}
+
+/* Vietnamese font support with better rendering */
+@supports (font-feature-settings: "kern") {
+    body {
+        font-feature-settings: "kern" 1;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Font weight normalization for all fallback fonts */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600 !important;
+    letter-spacing: -0.025em;
+}
+
+.navbar-brand {
+    font-weight: 700 !important;
+    letter-spacing: -0.025em;
+}
+
+.nav-link {
+    font-weight: 500 !important;
+}
+
+.btn {
+    font-weight: 500 !important;
+}
+
+/* Ensure consistent line height across different fonts */
+body {
+    line-height: 1.6 !important;
+}
+
+/* Local font detection for better performance */
+@font-face {
+    font-family: 'PoppinsLocal';
+    src: local('Poppins Regular'), local('Poppins-Regular'), local('Poppins');
+    font-display: swap;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'PoppinsLocal';
+    src: local('Poppins Medium'), local('Poppins-Medium');
+    font-display: swap;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: 'PoppinsLocal';
+    src: local('Poppins SemiBold'), local('Poppins-SemiBold');
+    font-display: swap;
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: 'PoppinsLocal';
+    src: local('Poppins Bold'), local('Poppins-Bold');
+    font-display: swap;
+    font-weight: 700;
+}
+
+/* Try local Poppins first, then fallback */
+.poppins-local body,
+.poppins-local * {
+    font-family: 'PoppinsLocal', var(--font-fallback) !important;
+}
+
+/* Emergency fallback for extremely slow connections */
+.no-js body,
+.font-loading-failed,
+.font-loading-failed * {
+    font-family: 'Arial', 'Helvetica', sans-serif !important;
+}
+
+/* Text smoothing for better readability on all fonts */
+body, * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Font size adjustments for better consistency across fallback fonts */
+@media screen and (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.3rem !important;
+    }
+    
+    h1 { font-size: 1.8rem !important; }
+    h2 { font-size: 1.6rem !important; }
+    h3 { font-size: 1.4rem !important; }
+    h4 { font-size: 1.2rem !important; }
+    h5 { font-size: 1.1rem !important; }
+    h6 { font-size: 1rem !important; }
+}
+
+/* Specific adjustments for system fonts */
+body.font-fallback {
+    letter-spacing: 0.01em;
+}
+
+body.font-fallback h1,
+body.font-fallback h2,
+body.font-fallback h3 {
+    letter-spacing: -0.015em;
+}
+
+/* Better button styling with system fonts */
+body.font-fallback .btn {
+    letter-spacing: 0.025em;
+    font-weight: 600 !important;
+}
+
+/* Card text improvements */
+body.font-fallback .card-text,
+body.font-fallback .card-title {
+    line-height: 1.5 !important;
+}
+
+/* Navbar improvements for system fonts */
+body.font-fallback .navbar-nav .nav-link {
+    font-weight: 600 !important;
+} 

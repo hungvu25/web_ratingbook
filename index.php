@@ -159,7 +159,7 @@ include 'includes/header.php';
                         <i class="fas fa-users fa-3x mb-3"></i>
                         <h4 class="card-title">
                             <?php 
-                            $stmt = $pdo->query("SELECT COUNT(*) as count FROM users WHERE role = 'user'");
+                            $stmt = $pdo->query("SELECT COUNT(*) as count FROM users");
                             echo $stmt->fetch()['count'];
                             ?>
                         </h4>
