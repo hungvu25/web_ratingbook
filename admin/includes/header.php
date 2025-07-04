@@ -28,9 +28,25 @@
     
     <!-- Critical inline styles for immediate rendering -->
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
+        /* CRITICAL: Đảm bảo text hiển thị ngay lập tức */
+        *, *::before, *::after {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
+            font-display: swap;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        body, html {
+            visibility: visible !important;
+            opacity: 1 !important;
+            font-family: inherit !important;
             background-color: #f8f9fc;
+        }
+        
+        /* Loading state - vẫn hiển thị text */
+        .font-loading, .font-loading * {
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         
         .sidebar {
@@ -87,6 +103,15 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        /* Force immediate visibility for all admin elements */
+        .sidebar, .sidebar *, .main-content, .main-content *, 
+        .navbar, .navbar *, .card, .card *, 
+        h1, h2, h3, h4, h5, h6, p, span, div, a, i {
+            visibility: visible !important;
+            opacity: 1 !important;
+            font-family: inherit !important;
         }
     </style>
 </head>
