@@ -6,23 +6,45 @@
     <title><?php echo isset($page_title) ? htmlspecialchars($page_title) . ' - ' . SITE_NAME : SITE_NAME; ?></title>
     <meta name="description" content="<?php echo SITE_DESCRIPTION; ?>">
     
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Font Fallback CSS - MUST load first để tránh FOUT -->
+    <link href="assets/css/font-fallback.css?v=<?php echo time(); ?>" rel="stylesheet">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <!-- Custom CSS -->
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style.css?v=<?php echo time(); ?>" rel="stylesheet">
     
+    <!-- Critical inline styles for immediate rendering -->
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
+        /* CRITICAL: Đảm bảo text hiển thị ngay lập tức */
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
+            font-display: swap;
+            visibility: visible !important;
         }
         
+        body {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Loading state - vẫn hiển thị text */
+        .font-loading, .font-loading * {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Enhanced hero section */
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -30,54 +52,94 @@
             margin-top: 76px;
         }
         
+        /* Enhanced book cards */
         .book-card {
-            transition: transform 0.3s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
         }
         
         .book-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
         .book-cover {
             height: 250px;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .book-card:hover .book-cover {
+            transform: scale(1.05);
         }
         
         .rating-stars {
             font-size: 0.9rem;
+            color: #ffd700;
+            text-shadow: 0 0 3px rgba(255, 215, 0, 0.5);
         }
         
+        /* Enhanced navbar */
         .navbar-brand {
             font-weight: 700;
             font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .navbar-brand:hover {
+            transform: scale(1.05);
         }
         
         .nav-link {
             font-weight: 500;
-            transition: color 0.3s;
+            transition: all 0.3s ease;
+            position: relative;
         }
         
         .nav-link:hover {
             color: #667eea !important;
+            transform: translateY(-2px);
         }
         
         .btn-custom {
             border-radius: 25px;
             padding: 10px 25px;
             font-weight: 500;
+            transition: all 0.3s ease;
         }
         
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Footer */
         footer {
-            background: #2c3e50;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
             color: white;
             margin-top: 50px;
         }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+                margin-top: 56px;
+            }
+            
+            .book-card {
+                margin-bottom: 1rem;
+            }
+        }
     </style>
+    
+    <!-- Smart Font Handler -->
+    <script src="assets/js/font-handler.js?v=<?php echo time(); ?>" defer></script>
 </head>
-<body>
+<body class="font-loading">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
@@ -124,8 +186,11 @@
                         }
                         ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i>
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <img src="<?php echo getUserAvatar($currentUser); ?>" 
+                                     alt="Avatar" 
+                                     class="rounded-circle me-2" 
+                                     style="width: 32px; height: 32px; object-fit: cover;">
                                 <?php echo htmlspecialchars($displayName); ?>
                             </a>
                             <ul class="dropdown-menu">

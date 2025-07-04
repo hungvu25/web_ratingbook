@@ -128,24 +128,33 @@ $books = $pdo->query("
     ORDER BY b.created_at DESC
 ")->fetchAll();
 
-include '../includes/header.php';
+include 'includes/header.php';
 ?>
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3">Quản lý sách</h1>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookModal">
+<!-- Dashboard Content -->
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3">
+                <i class="fas fa-book me-2"></i>
+                Quản lý sách
+            </h1>
+                            <a href="add-book.php" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Thêm sách mới
-                </button>
-            </div>
+                </a>
         </div>
     </div>
+</div>
     
-    <!-- Danh sách sách -->
-    <div class="card shadow">
-        <div class="card-body">
+<!-- Danh sách sách -->
+<div class="card shadow">
+    <div class="card-header">
+        <h6 class="mb-0">
+            <i class="fas fa-list me-2"></i>
+            Danh sách sách (<?php echo count($books); ?>)
+        </h6>
+    </div>
+    <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
@@ -293,4 +302,4 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php endif; ?>
 </script>
 
-<?php include '../includes/footer.php'; ?> 
+<?php include 'includes/footer.php'; ?> 

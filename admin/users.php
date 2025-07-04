@@ -69,19 +69,28 @@ $users = $pdo->query("
     ORDER BY u.created_at DESC
 ")->fetchAll();
 
-include '../includes/header.php';
+include 'includes/header.php';
 ?>
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="h3 mb-4">Quản lý người dùng</h1>
-        </div>
+<!-- Dashboard Content -->
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">
+            <i class="fas fa-users me-2"></i>
+            Quản lý người dùng
+        </h1>
     </div>
-    
-    <!-- Danh sách người dùng -->
-    <div class="card shadow">
-        <div class="card-body">
+</div>
+
+<!-- Danh sách người dùng -->
+<div class="card shadow">
+    <div class="card-header">
+        <h6 class="mb-0">
+            <i class="fas fa-list me-2"></i>
+            Danh sách người dùng (<?php echo count($users); ?>)
+        </h6>
+    </div>
+    <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
@@ -235,4 +244,4 @@ include '../includes/header.php';
     </div>
 </div>
 
-<?php include '../includes/footer.php'; ?> 
+<?php include 'includes/footer.php'; ?> 

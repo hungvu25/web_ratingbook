@@ -1,0 +1,254 @@
+/* Font Fallback CSS - Tối ưu cho InfinityFree hosting */
+
+/* Primary font stack với fallbacks mạnh mẽ */
+:root {
+    --font-primary: 'Poppins', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Arial', sans-serif;
+    --font-fallback: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif;
+    --font-emergency: 'Arial', 'Helvetica', 'sans-serif';
+}
+
+/* Immediate fallback - áp dụng ngay để tránh invisible text */
+* {
+    font-family: var(--font-fallback) !important;
+    font-display: swap;
+}
+
+/* Đảm bảo text luôn hiển thị ngay cả khi loading */
+body {
+    font-family: var(--font-fallback) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Remove loading state ngay để tránh flash */
+.font-loading body {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Apply Poppins khi đã load thành công */
+.poppins-loaded *,
+.poppins-local * {
+    font-family: var(--font-primary) !important;
+}
+
+/* Enhanced fallback cho tất cả trường hợp */
+.font-fallback *,
+body.font-fallback *,
+.no-js *,
+.font-loading-failed * {
+    font-family: var(--font-fallback) !important;
+}
+
+/* Emergency fallback cho trường hợp tệ nhất */
+.font-emergency *,
+.font-error * {
+    font-family: var(--font-emergency) !important;
+}
+
+/* Vietnamese font support với rendering tốt hơn */
+@supports (font-feature-settings: "kern") {
+    * {
+        font-feature-settings: "kern" 1;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Font weight normalization cho tất cả fallback fonts */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: 600 !important;
+    letter-spacing: -0.025em;
+    line-height: 1.2 !important;
+}
+
+.navbar-brand {
+    font-weight: 700 !important;
+    letter-spacing: -0.025em;
+}
+
+.nav-link {
+    font-weight: 500 !important;
+}
+
+.btn {
+    font-weight: 500 !important;
+    letter-spacing: 0.025em;
+}
+
+/* Consistent line height cho mọi font */
+body, p, div, span, a, li, td, th {
+    line-height: 1.6 !important;
+}
+
+/* Local font detection tối ưu */
+@font-face {
+    font-family: 'PoppinsLocal';
+    src: local('Poppins Regular'), local('Poppins-Regular'), local('Poppins');
+    font-display: swap;
+    font-weight: 400;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+}
+
+@font-face {
+    font-family: 'PoppinsLocal';
+    src: local('Poppins Medium'), local('Poppins-Medium');
+    font-display: swap;
+    font-weight: 500;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+}
+
+@font-face {
+    font-family: 'PoppinsLocal';
+    src: local('Poppins SemiBold'), local('Poppins-SemiBold');
+    font-display: swap;
+    font-weight: 600;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+}
+
+@font-face {
+    font-family: 'PoppinsLocal';
+    src: local('Poppins Bold'), local('Poppins-Bold');
+    font-display: swap;
+    font-weight: 700;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+}
+
+/* Ưu tiên local Poppins */
+.poppins-local * {
+    font-family: 'PoppinsLocal', var(--font-fallback) !important;
+}
+
+/* Text smoothing cho tất cả fonts */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Mobile optimizations */
+@media screen and (max-width: 768px) {
+    body {
+        font-size: 14px !important;
+    }
+    
+    .navbar-brand {
+        font-size: 1.3rem !important;
+    }
+    
+    h1, .h1 { font-size: 1.8rem !important; }
+    h2, .h2 { font-size: 1.6rem !important; }
+    h3, .h3 { font-size: 1.4rem !important; }
+    h4, .h4 { font-size: 1.2rem !important; }
+    h5, .h5 { font-size: 1.1rem !important; }
+    h6, .h6 { font-size: 1rem !important; }
+}
+
+/* Specific adjustments cho system fonts */
+.font-fallback,
+body.font-fallback {
+    letter-spacing: 0.01em;
+}
+
+.font-fallback h1, .font-fallback h2, .font-fallback h3,
+body.font-fallback h1, body.font-fallback h2, body.font-fallback h3 {
+    letter-spacing: -0.015em;
+}
+
+/* Button styling improvements với system fonts */
+.font-fallback .btn,
+body.font-fallback .btn {
+    letter-spacing: 0.025em;
+    font-weight: 600 !important;
+}
+
+/* Card improvements */
+.font-fallback .card-text, .font-fallback .card-title,
+body.font-fallback .card-text, body.font-fallback .card-title {
+    line-height: 1.5 !important;
+}
+
+/* Navbar improvements */
+.font-fallback .navbar-nav .nav-link,
+body.font-fallback .navbar-nav .nav-link {
+    font-weight: 600 !important;
+}
+
+/* CRITICAL FIXES cho InfinityFree - Đảm bảo font hiển thị ngay lập tức */
+
+/* Override tất cả loading states */
+.font-loading, .font-loading * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-family: var(--font-fallback) !important;
+}
+
+/* Force immediate visibility cho tất cả elements */
+html, body, main, div, p, h1, h2, h3, h4, h5, h6, a, span, li, td, th, button, input, select, textarea {
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-family: var(--font-fallback) !important;
+}
+
+/* Specific overrides cho common elements */
+.navbar, .navbar *, .card, .card *, .btn, .btn * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-family: var(--font-fallback) !important;
+}
+
+/* Remove any animations that might hide text */
+* {
+    animation: none !important;
+    transition: font-family 0s !important;
+}
+
+/* InfinityFree specific - assume slow loading */
+@media screen {
+    * {
+        font-family: var(--font-fallback) !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Performance optimizations */
+* {
+    font-kerning: auto;
+    font-variant-ligatures: common-ligatures;
+    font-synthesis: none;
+}
+
+/* Table font improvements */
+table, th, td {
+    font-family: inherit !important;
+}
+
+/* Form elements */
+input, textarea, select, button {
+    font-family: inherit !important;
+}
+
+/* Tooltip and popover improvements */
+.tooltip, .popover {
+    font-family: var(--font-fallback) !important;
+}
+
+/* Loading state improvements - đảm bảo hiển thị ngay */
+.loading, .loading * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-family: var(--font-fallback) !important;
+}
+
+/* High specificity fallback cho mọi trường hợp */
+html body * {
+    font-family: var(--font-fallback) !important;
+}
+
+html.poppins-loaded body *,
+html.poppins-local body * {
+    font-family: var(--font-primary) !important;
+} 

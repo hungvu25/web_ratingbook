@@ -17,7 +17,7 @@ $stmt = $pdo->query("SELECT COUNT(*) as count FROM books");
 $stats['total_books'] = $stmt->fetch()['count'];
 
 // Tổng số người dùng
-$stmt = $pdo->query("SELECT COUNT(*) as count FROM users WHERE role = 'user'");
+$stmt = $pdo->query("SELECT COUNT(*) as count FROM users");
 $stats['total_users'] = $stmt->fetch()['count'];
 
 // Tổng số đánh giá
@@ -176,7 +176,7 @@ include 'includes/header.php';
                     <div class="text-center py-4">
                         <i class="fas fa-book fa-3x text-muted mb-3"></i>
                         <p class="text-muted">Chưa có sách nào</p>
-                        <a href="../add-book.php" class="btn btn-primary">
+                        <a href="add-book.php" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Thêm sách đầu tiên
                         </a>
                     </div>

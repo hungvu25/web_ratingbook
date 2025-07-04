@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config/imgbb_config.php';
+require_once __DIR__ . '/imgbb_functions.php';
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -333,6 +335,35 @@ function logActivity($action, $details = '') {
         ]);
     } catch (PDOException $e) {
         // Fail silently for logging
+    }
+}
+/**
+ * Get user avatar URL
+ */
+function getUserAvatar($user = null) {
+    if (!$user) {
+        $user = getCurrentUser();
+    }
+    
+    if (!empty($user['avatar'])) {
+        return $user['avatar'];
+    }
+    
+    return DEFAULT_AVATAR_URL;
+}
+
+/**
+ * Update user avatar
+ */
+function updateUserAvatar($userId, $avatarUrl) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("UPDATE users SET avatar = ? WHERE id = ?");
+        return $stmt->execute([$avatarUrl, $userId]);
+    } catch (PDOException $e) {
+        error_log("Error updating avatar: " . $e->getMessage());
+        return false;
     }
 }
 ?> 
