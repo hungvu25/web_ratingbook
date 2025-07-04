@@ -6,8 +6,6 @@
     <title><?php echo isset($page_title) ? htmlspecialchars($page_title) . ' - Admin - ' . SITE_NAME : 'Admin - ' . SITE_NAME; ?></title>
     
     <!-- Preload critical resources -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
@@ -23,8 +21,7 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     
     <!-- Admin Custom CSS -->
     <link href="assets/css/admin.css?v=<?php echo time(); ?>" rel="stylesheet">
