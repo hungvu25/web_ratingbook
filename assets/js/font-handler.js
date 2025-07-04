@@ -6,14 +6,14 @@
 (function() {
     'use strict';
     
-    // Configuration - Rất tích cực cho InfinityFree
+    // Configuration - Sử dụng local fonts cho InfinityFree
     const CONFIG = {
-        googleFontUrl: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap',
-        fallbackTimeout: 1500, // Chỉ 1.5s cho hosting chậm
+        useLocalFonts: true, // Chuyển sang local fonts
+        fallbackTimeout: 500, // Giảm xuống 0.5s
         retryAttempts: 0, // Không retry để tránh chậm trễ
         testString: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-        maxLoadTime: 3000, // Chỉ 3s tối đa
-        emergencyTimeout: 2000 // Emergency fallback sau 2s
+        maxLoadTime: 1000, // Giảm xuống 1s tối đa
+        emergencyTimeout: 800 // Emergency fallback sau 0.8s
     };
     
     // Font loading state
@@ -40,16 +40,32 @@
         document.documentElement.classList.remove('font-loading');
         document.documentElement.classList.add('font-loaded');
         
+        // Force hiển thị ngay với CSS override
+        const emergencyCSS = document.createElement('style');
+        emergencyCSS.id = 'font-emergency-override';
+        emergencyCSS.textContent = `
+            * {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            body, html {
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            .navbar, .navbar *, .card, .card *, .btn, .btn * {
+                visibility: visible !important;
+                opacity: 1 !important;
+                font-family: inherit !important;
+            }
+        `;
+        document.head.appendChild(emergencyCSS);
+        
         // Force hiển thị ngay
         document.body.style.visibility = 'visible';
         document.body.style.opacity = '1';
-        
-        // Đảm bảo tất cả elements hiển thị
-        const allElements = document.querySelectorAll('*');
-        allElements.forEach(el => {
-            el.style.visibility = 'visible';
-            el.style.fontFamily = 'var(--font-fallback)';
-        });
         
         // Dispatch event
         window.dispatchEvent(new CustomEvent('fontFallbackActivated'));
@@ -64,32 +80,60 @@
         console.log('🚨 Emergency fallback cho InfinityFree hosting');
         fontLoadingState.emergencyActive = true;
         
+        // Xóa tất cả style cũ có thể gây xung đột
+        const oldStyles = document.querySelectorAll('style[id*="font"]');
+        oldStyles.forEach(style => style.remove());
+        
         // Override tất cả font styles
-        const emergencyCSS = `
-            * {
+        const emergencyCSS = document.createElement('style');
+        emergencyCSS.id = 'font-emergency-critical';
+        emergencyCSS.textContent = `
+            *, *::before, *::after {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            body {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif !important;
                 visibility: visible !important;
                 opacity: 1 !important;
             }
         `;
-        
-        const style = document.createElement('style');
-        style.textContent = emergencyCSS;
-        document.head.appendChild(style);
+        document.head.appendChild(emergencyCSS);
         
         applyFallback();
     }
     
     /**
-     * Kiểm tra font local nhanh chóng
+     * Force visibility để tránh invisible text
+     */
+    function forceVisibility() {
+        document.body.style.visibility = 'visible';
+        document.body.style.opacity = '1';
+        
+        // Override bất kỳ CSS nào có thể ẩn text
+        const visibilityCSS = document.createElement('style');
+        visibilityCSS.id = 'force-visibility';
+        visibilityCSS.textContent = `
+            body, html, main, div, p, h1, h2, h3, h4, h5, h6, a, span, li, td, th, button, input, select, textarea {
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+        `;
+        document.head.appendChild(visibilityCSS);
+    }
+    
+    /**
+     * Kiểm tra font local nhanh chóng - timeout rất ngắn
      */
     function checkLocalPoppins() {
         return new Promise((resolve) => {
             try {
-                // Timeout nhanh để không block
+                // Timeout cực ngắn
                 const timeoutId = setTimeout(() => {
                     resolve(false);
-                }, 300);
+                }, 200);
                 
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -129,41 +173,64 @@
     }
     
     /**
-     * Load Google Fonts với timeout rất ngắn
+     * Kiểm tra local fonts đã load chưa
      */
-    function loadGoogleFonts() {
-        return new Promise((resolve, reject) => {
-            console.log('🔄 Thử load Google Fonts (timeout 1.5s)');
+    function checkLocalFontsLoaded() {
+        return new Promise((resolve) => {
+            console.log('🔄 Kiểm tra local fonts');
             
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = CONFIG.googleFontUrl;
-            link.crossOrigin = 'anonymous';
+            // Kiểm tra xem CSS đã load chưa
+            const localFontCSS = document.querySelector('link[href*="local-fonts.css"]');
+            if (!localFontCSS) {
+                console.log('⚠️ Local fonts CSS chưa được tìm thấy');
+                resolve(false);
+                return;
+            }
             
+            // Test font rendering với timeout ngắn
             const timeout = setTimeout(() => {
-                console.log('⏰ Google Fonts timeout - chuyển sang fallback');
-                link.remove();
-                reject(new Error('Google Fonts timeout'));
+                console.log('⚠️ Local fonts test timeout - sử dụng fallback');
+                resolve(false);
             }, CONFIG.fallbackTimeout);
             
-            link.onload = () => {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                if (!ctx) {
+                    clearTimeout(timeout);
+                    resolve(false);
+                    return;
+                }
+                
+                // Test với system font
+                ctx.font = '16px Arial, sans-serif';
+                const defaultWidth = ctx.measureText('Test Poppins Font').width;
+                
+                // Test với Poppins
+                ctx.font = '16px Poppins, Arial, sans-serif';
+                const poppinsWidth = ctx.measureText('Test Poppins Font').width;
+                
                 clearTimeout(timeout);
-                console.log('✅ Google Fonts loaded thành công');
-                fontLoadingState.poppinsLoaded = true;
-                document.documentElement.classList.add('poppins-loaded');
-                document.documentElement.classList.remove('font-loading');
-                document.documentElement.classList.add('font-loaded');
-                resolve(true);
-            };
-            
-            link.onerror = () => {
+                
+                const hasPoppins = Math.abs(defaultWidth - poppinsWidth) > 0.5;
+                
+                if (hasPoppins) {
+                    console.log('✅ Local Poppins font detected');
+                    fontLoadingState.poppinsLoaded = true;
+                    document.documentElement.classList.add('poppins-loaded');
+                    document.documentElement.classList.remove('font-loading');
+                    document.documentElement.classList.add('font-loaded');
+                    resolve(true);
+                } else {
+                    console.log('⚠️ Poppins không được detect - sử dụng fallback');
+                    resolve(false);
+                }
+            } catch (error) {
                 clearTimeout(timeout);
-                console.log('❌ Google Fonts load failed');
-                link.remove();
-                reject(new Error('Google Fonts failed'));
-            };
-            
-            document.head.appendChild(link);
+                console.log('❌ Lỗi khi test local fonts:', error);
+                resolve(false);
+            }
         });
     }
     
@@ -175,7 +242,8 @@
         const isInfinityFree = hostname.includes('infy.uk') || 
                               hostname.includes('infinityfree') || 
                               hostname.includes('epizy.com') ||
-                              hostname.includes('unaux.com');
+                              hostname.includes('unaux.com') ||
+                              hostname.includes('sachhone');
         
         if (isInfinityFree) {
             console.log('🌐 InfinityFree hosting detected - sử dụng fallback aggressive');
@@ -196,7 +264,7 @@
         
         const hostingType = detectHostingEnvironment();
         
-        // Emergency timeout luôn có
+        // Emergency timeout - rất ngắn
         const emergencyTimer = setTimeout(() => {
             if (!fontLoadingState.fallbackActive && !fontLoadingState.poppinsLoaded) {
                 console.log('⏰ Emergency timeout - force fallback');
@@ -204,7 +272,7 @@
             }
         }, CONFIG.emergencyTimeout);
         
-        // Global timeout
+        // Global timeout - cũng rất ngắn
         const globalTimer = setTimeout(() => {
             if (!fontLoadingState.fallbackActive && !fontLoadingState.poppinsLoaded) {
                 console.log('⏰ Global timeout - áp dụng fallback');
@@ -213,10 +281,10 @@
         }, CONFIG.maxLoadTime);
         
         try {
-            // Nếu là InfinityFree, aggressive fallback
+            // Nếu là InfinityFree hoặc hostname có sachhone, aggressive fallback ngay
             if (hostingType === 'infinityfree') {
-                console.log('🏃‍♂️ InfinityFree - áp dụng fallback ngay');
-                setTimeout(applyFallback, 500); // Fallback sau 0.5s
+                console.log('🏃‍♂️ InfinityFree detected - áp dụng fallback ngay');
+                setTimeout(applyFallback, 300); // Fallback sau 0.3s
             }
             
             // Kiểm tra local font nhanh
@@ -228,13 +296,21 @@
                 return;
             }
             
-            // Thử Google Fonts (nhưng không chờ lâu)
+            // Thử local fonts
             try {
-                await loadGoogleFonts();
-                clearTimeout(emergencyTimer);
-                clearTimeout(globalTimer);
+                const localFontsLoaded = await checkLocalFontsLoaded();
+                if (localFontsLoaded) {
+                    clearTimeout(emergencyTimer);
+                    clearTimeout(globalTimer);
+                    return;
+                } else {
+                    console.log('⚠️ Local fonts không khả dụng - chuyển sang fallback');
+                    applyFallback();
+                    clearTimeout(emergencyTimer);
+                    clearTimeout(globalTimer);
+                }
             } catch (error) {
-                console.log('❌ Google Fonts failed:', error.message);
+                console.log('❌ Local fonts check failed:', error.message);
                 applyFallback();
                 clearTimeout(emergencyTimer);
                 clearTimeout(globalTimer);
@@ -255,9 +331,11 @@
         try {
             // Luôn assume mạng chậm trên InfinityFree
             const hostname = window.location.hostname;
-            if (hostname.includes('infy.uk') || hostname.includes('infinityfree')) {
+            if (hostname.includes('infy.uk') || 
+                hostname.includes('infinityfree') || 
+                hostname.includes('sachhone')) {
                 console.log('🐌 InfinityFree hosting - assume slow network');
-                setTimeout(applyFallback, 800);
+                setTimeout(applyFallback, 500);
                 return true;
             }
             
@@ -274,25 +352,11 @@
                 }
             }
         } catch (error) {
-            console.log('⚠️ Network detection failed');
+            console.log('⚠️ Network detection failed - applying fallback');
+            applyFallback();
         }
         
         return false;
-    }
-    
-    /**
-     * Force visibility để tránh invisible text
-     */
-    function forceVisibility() {
-        document.body.style.visibility = 'visible';
-        document.body.style.opacity = '1';
-        
-        // Đảm bảo tất cả text hiển thị
-        const textElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div, a, button, li');
-        textElements.forEach(el => {
-            el.style.visibility = 'visible';
-            el.style.opacity = '1';
-        });
     }
     
     /**
@@ -307,8 +371,8 @@
             return;
         }
         
-        // Emergency fallback ngay lập tức cho worst case
-        setTimeout(emergencyFallback, 5000);
+        // Emergency fallback rất sớm cho worst case
+        setTimeout(emergencyFallback, 3000);
         
         // Check network và apply fallback nếu cần
         if (handleNetworkConditions()) {
@@ -328,10 +392,18 @@
         forceVisibility: forceVisibility
     };
     
-    // Start ngay lập tức
+    // Start ngay lập tức - nhiều lần để đảm bảo
     init();
     
     // Backup initialization
-    setTimeout(init, 100);
+    setTimeout(init, 50);
+    setTimeout(init, 200);
+    
+    // Immediate fallback cho InfinityFree
+    if (window.location.hostname.includes('infy.uk') || 
+        window.location.hostname.includes('infinityfree') ||
+        window.location.hostname.includes('sachhone')) {
+        setTimeout(applyFallback, 100);
+    }
     
 })(); 

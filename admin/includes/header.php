@@ -14,7 +14,10 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Fallback CSS - MUST load first để tránh FOUT -->
+    <!-- Local Fonts - Load first để tránh FOUT -->
+    <link href="../assets/css/local-fonts.css?v=<?php echo time(); ?>" rel="stylesheet">
+    
+    <!-- Font Fallback CSS - MUST load second -->
     <link href="../assets/css/font-fallback.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Font Awesome -->
@@ -82,7 +85,13 @@
         }
     </style>
     
-    <!-- Smart Font Handler -->
+    <!-- Smart Font Handler với immediate fallback -->
+    <script>
+        // Immediate font fallback for admin
+        document.documentElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Arial", sans-serif';
+        document.documentElement.style.visibility = 'visible';
+        document.documentElement.style.opacity = '1';
+    </script>
     <script src="../assets/js/font-handler.js?v=<?php echo time(); ?>" defer></script>
 </head>
 <body class="font-loading">

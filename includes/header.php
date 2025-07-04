@@ -6,36 +6,52 @@
     <title><?php echo isset($page_title) ? htmlspecialchars($page_title) . ' - ' . SITE_NAME : SITE_NAME; ?></title>
     <meta name="description" content="<?php echo SITE_DESCRIPTION; ?>">
     
-    <!-- Preload critical resources -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Preload critical resources cho CDN -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
-    <!-- Font Fallback CSS - MUST load first để tránh FOUT -->
+    <!-- Local Fonts - Load first để tránh FOUT -->
+    <link href="assets/css/local-fonts.css?v=<?php echo time(); ?>" rel="stylesheet">
+    
+    <!-- Font Fallback CSS - MUST load second -->
     <link href="assets/css/font-fallback.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome with fallback -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
     
     <!-- Custom CSS -->
     <link href="assets/css/style.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Critical inline styles for immediate rendering -->
     <style>
-        /* CRITICAL: Đảm bảo text hiển thị ngay lập tức */
-        * {
+        /* CRITICAL: Đảm bảo text và icon hiển thị ngay lập tức */
+        *, *::before, *::after {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
             font-display: swap;
             visibility: visible !important;
+            opacity: 1 !important;
         }
         
-        body {
+        body, html {
             visibility: visible !important;
             opacity: 1 !important;
+            font-family: inherit !important;
+        }
+        
+        /* Force icon visibility */
+        i, .fas, .far, .fab, [class*="fa-"] {
+            visibility: visible !important;
+            opacity: 1 !important;
+            font-family: "Font Awesome 6 Free", "FontAwesome", serif !important;
+        }
+        
+        /* Icon fallback */
+        i[class*="fa-"]:empty::before {
+            content: "•";
+            font-family: inherit !important;
         }
         
         /* Loading state - vẫn hiển thị text */
@@ -134,9 +150,27 @@
                 margin-bottom: 1rem;
             }
         }
+        
+        /* Force immediate visibility for all common elements */
+        .navbar, .navbar *, .hero-section, .hero-section *, 
+        .book-card, .book-card *, .btn, .btn *, 
+        h1, h2, h3, h4, h5, h6, p, span, div, a {
+            visibility: visible !important;
+            opacity: 1 !important;
+            font-family: inherit !important;
+        }
     </style>
     
-    <!-- Smart Font Handler -->
+    <!-- Error Handler - Load first -->
+    <script src="assets/js/error-handler.js?v=<?php echo time(); ?>"></script>
+    
+    <!-- Smart Font Handler - Load early -->
+    <script>
+        // Immediate font fallback
+        document.documentElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Arial", sans-serif';
+        document.documentElement.style.visibility = 'visible';
+        document.documentElement.style.opacity = '1';
+    </script>
     <script src="assets/js/font-handler.js?v=<?php echo time(); ?>" defer></script>
 </head>
 <body class="font-loading">
@@ -177,39 +211,29 @@
                 </ul>
                 
                 <ul class="navbar-nav">
-                    <?php if (isLoggedIn()): ?>
-                        <?php 
-                        $currentUser = getCurrentUser(); 
-                        $displayName = 'User';
-                        if ($currentUser) {
-                            $displayName = $currentUser['full_name'] ?? $currentUser['username'] ?? 'User';
-                        }
-                        ?>
+                    <?php if (isset($_SESSION['user_id'])): ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <img src="<?php echo getUserAvatar($currentUser); ?>" 
-                                     alt="Avatar" 
-                                     class="rounded-circle me-2" 
-                                     style="width: 32px; height: 32px; object-fit: cover;">
-                                <?php echo htmlspecialchars($displayName); ?>
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>
+                                Xin chào, <?php echo htmlspecialchars($_SESSION['username']); ?>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="profile.php">
-                                    <i class="fas fa-user me-2"></i>Hồ sơ
+                                    <i class="fas fa-user-circle me-2"></i>Hồ sơ
                                 </a></li>
-                                <li><a class="dropdown-item" href="my-reviews.php">
+                                <li><a class="dropdown-item" href="profile.php#reviews">
                                     <i class="fas fa-star me-2"></i>Đánh giá của tôi
                                 </a></li>
-                                <li><a class="dropdown-item" href="reading-list.php">
+                                <li><a class="dropdown-item" href="profile.php#reading-list">
                                     <i class="fas fa-bookmark me-2"></i>Danh sách đọc
                                 </a></li>
-                                <?php if (isAdmin()): ?>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="admin/">
-                                    <i class="fas fa-cog me-2"></i>Quản trị
-                                </a></li>
+                                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                                    <li><a class="dropdown-item" href="admin/">
+                                        <i class="fas fa-cog me-2"></i>Quản trị
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
                                 <?php endif; ?>
-                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="logout.php">
                                     <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                 </a></li>
@@ -233,4 +257,7 @@
     </nav>
 
     <main>
-        <?php displayFlashMessage(); ?> 
+        <?php displayFlashMessage(); ?>
+    </main>
+</body>
+</html> 
