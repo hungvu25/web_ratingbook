@@ -23,27 +23,35 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Admin Custom CSS -->
     <link href="assets/css/admin.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Critical inline styles for immediate rendering -->
     <style>
-        /* CRITICAL: Đảm bảo text hiển thị ngay lập tức */
-        * {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
-            font-display: swap;
-            visibility: visible !important;
-        }
-        
         body {
-            visibility: visible !important;
-            opacity: 1 !important;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fc;
         }
         
-        /* Loading state - vẫn hiển thị text */
-        .font-loading, .font-loading * {
-            visibility: visible !important;
-            opacity: 1 !important;
+        .sidebar {
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            transition: all 0.3s;
+            min-height: 100vh;
+            width: calc(100% - 250px);
         }
         
         /* Ensure proper layout even during font loading */
@@ -84,15 +92,6 @@
             }
         }
     </style>
-    
-    <!-- Smart Font Handler với immediate fallback -->
-    <script>
-        // Immediate font fallback for admin
-        document.documentElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Arial", sans-serif';
-        document.documentElement.style.visibility = 'visible';
-        document.documentElement.style.opacity = '1';
-    </script>
-    <script src="../assets/js/font-handler.js?v=<?php echo time(); ?>" defer></script>
 </head>
 <body class="font-loading">
     <!-- Sidebar -->

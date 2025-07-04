@@ -161,9 +161,6 @@
         }
     </style>
     
-    <!-- Error Handler - Load first -->
-    <script src="assets/js/error-handler.js?v=<?php echo time(); ?>"></script>
-    
     <!-- Smart Font Handler - Load early -->
     <script>
         // Immediate font fallback
