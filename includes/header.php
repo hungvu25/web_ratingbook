@@ -9,18 +9,23 @@
     <!-- Preload critical resources cho CDN -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     
-    <!-- Local Fonts - Load first để tránh FOUT -->
+    <!-- CRITICAL: Local Fonts FIRST để tránh FOUT -->
     <link href="assets/css/local-fonts.css?v=<?php echo time(); ?>" rel="stylesheet">
     
-    <!-- Font Fallback CSS - MUST load second -->
+    <!-- Font Awesome Local Fallback -->
+    <link href="assets/css/fontawesome-local.css?v=<?php echo time(); ?>" rel="stylesheet">
+    
+    <!-- Font Fallback CSS - Enhanced system -->
     <link href="assets/css/font-fallback.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome with fallback -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    <!-- Font Awesome CDN với fallback detection -->
+    <link id="fontawesome-cdn" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
     
     <!-- Custom CSS -->
     <link href="assets/css/style.css?v=<?php echo time(); ?>" rel="stylesheet">
@@ -29,7 +34,7 @@
     <style>
         /* CRITICAL: Đảm bảo text và icon hiển thị ngay lập tức */
         *, *::before, *::after {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
             font-display: swap;
             visibility: visible !important;
             opacity: 1 !important;
@@ -41,17 +46,31 @@
             font-family: inherit !important;
         }
         
-        /* Force icon visibility */
+        /* Force icon visibility với local fonts */
         i, .fas, .far, .fab, [class*="fa-"] {
             visibility: visible !important;
             opacity: 1 !important;
             font-family: "Font Awesome 6 Free", "FontAwesome", serif !important;
         }
         
-        /* Icon fallback */
-        i[class*="fa-"]:empty::before {
+        /* Icon fallback for worst case */
+        .fa-icon-fallback i[class*="fa-"]:empty::before {
             content: "•";
             font-family: inherit !important;
+        }
+        
+        /* Status indicators for debugging */
+        .font-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 9999;
+            display: none; /* Ẩn trong production */
         }
         
         /* Loading state - vẫn hiển thị text */
@@ -161,16 +180,55 @@
         }
     </style>
     
-    <!-- Smart Font Handler - Load early -->
+    <!-- Enhanced Font Handler - Load early -->
     <script>
-        // Immediate font fallback
-        document.documentElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Arial", sans-serif';
+        // Immediate font fallback setup
+        document.documentElement.style.fontFamily = "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Arial', sans-serif";
         document.documentElement.style.visibility = 'visible';
         document.documentElement.style.opacity = '1';
+        
+        // Set loading state
+        document.documentElement.classList.add('fonts-loading');
+        
+        // CDN Fallback checker
+        window.checkCDNStatus = function() {
+            // Check if Font Awesome CDN loaded
+            const testIcon = document.createElement('i');
+            testIcon.className = 'fas fa-home';
+            testIcon.style.position = 'absolute';
+            testIcon.style.left = '-9999px';
+            document.body.appendChild(testIcon);
+            
+            const iconWidth = testIcon.offsetWidth;
+            document.body.removeChild(testIcon);
+            
+            // If CDN failed, add fallback class
+            if (iconWidth < 10) {
+                console.log('🔄 Font Awesome CDN failed, using local fallback');
+                document.documentElement.classList.add('fa-cdn-failed');
+                
+                // Remove CDN link to prevent further loading attempts
+                const cdnLink = document.getElementById('fontawesome-cdn');
+                if (cdnLink) cdnLink.remove();
+            } else {
+                console.log('✅ Font Awesome CDN loaded successfully');
+                document.documentElement.classList.add('fa-cdn-loaded');
+            }
+        };
+        
+        // Check CDN status after page load
+        window.addEventListener('load', function() {
+            setTimeout(checkCDNStatus, 1000);
+        });
     </script>
     <script src="assets/js/font-handler.js?v=<?php echo time(); ?>" defer></script>
 </head>
 <body class="font-loading">
+    <!-- Font Status Indicator (Development only) -->
+    <div id="fontStatus" class="font-status">
+        Loading fonts...
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
