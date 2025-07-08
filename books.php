@@ -74,7 +74,7 @@ $query = "
 
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
-$books = $stmt->fetchAll();
+$books = sanitizeDataFromDb($stmt->fetchAll());
 
 // Lấy danh sách thể loại cho filter
 $categories = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();

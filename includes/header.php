@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" dir="ltr" class="vietnamese-language">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? htmlspecialchars($page_title) . ' - ' . SITE_NAME : SITE_NAME; ?></title>
-    <meta name="description" content="<?php echo SITE_DESCRIPTION; ?>">
+    <title><?php echo isset($page_title) ? htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8') . ' - ' . SITE_NAME : SITE_NAME; ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars(SITE_DESCRIPTION, ENT_QUOTES, 'UTF-8'); ?>">
+    <!-- Vietnamese language support -->
+    <meta http-equiv="Content-Language" content="vi">
+    <meta name="language" content="Vietnamese">
     
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,28 +17,75 @@
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
     <!-- Preload Font Awesome -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'";
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
     <!-- Roboto Local Font CSS - Load first -->
-    <link href="assets/css/roboto-local.css?v=<?php echo time(); ?>" rel="stylesheet">
+    <link href="/assets/css/roboto-local.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Font Fallback CSS - MUST load second để tránh FOUT -->
-    <link href="assets/css/font-fallback.css?v=<?php echo time(); ?>" rel="stylesheet">
+    <link href="/assets/css/font-fallback.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome - load with high priority -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+    
+    <script>
+        // Thêm class font-fallback vào body để đảm bảo font hiển thị đúng
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('font-fallback');
+            // Kích hoạt font awesome
+            if (typeof FontAwesome !== 'undefined') {
+                FontAwesome.dom.i2svg();
+            }
+        });
+    </script>
+    
+    <script>
+        // Xử lý font tiếng Việt
+        document.addEventListener('DOMContentLoaded', function() {
+            // Kiểm tra và khởi tạo các thẻ có chứa text tiếng Việt
+            const fixVietnameseText = () => {
+                // Danh sách các selector cần áp dụng font tiếng Việt
+                const selectors = [
+                    '.card-title', '.card-text', '.navbar-brand', '.nav-link', 
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', '.btn', 'span', 
+                    'a', 'div.text-content', '.book-author', '.book-title'
+                ];
+                
+                // Áp dụng font cho từng selector
+                selectors.forEach(selector => {
+                    const elements = document.querySelectorAll(selector);
+                    elements.forEach(el => {
+                        // Thêm class để áp dụng font
+                        el.classList.add('vietnamese-text');
+                    });
+                });
+            };
+            
+            // Chạy ngay khi trang load xong
+            fixVietnameseText();
+            
+            // Chạy lại sau 500ms để đảm bảo tất cả nội dung đã load
+            setTimeout(fixVietnameseText, 500);
+        });
+    </script>
     
     <!-- Icon Fixes CSS - load after Font Awesome -->
-    <link href="assets/css/icon-fixes.css?v=<?php echo time(); ?>" rel="stylesheet">
-    
-    <!-- Fix Duplicate Icons Script - Load immediately after Font Awesome -->
-    <script src="fix-duplicate-icons.js?v=<?php echo time(); ?>"></script>
+    <link href="/assets/css/icon-fixes.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link href="assets/css/style.css?v=<?php echo time(); ?>" rel="stylesheet">
+    <link href="/assets/css/style.css?v=<?php echo time(); ?>" rel="stylesheet">
+    
+    <!-- Vietnamese text fixes -->
+    <link href="/assets/css/vietnamese-text-fix.css?v=<?php echo time(); ?>" rel="stylesheet">
+    <link href="/assets/css/vietnamese-font.css?v=<?php echo time(); ?>" rel="stylesheet">
+    
+    <!-- Preload quan trọng các font Vietnamese -->
+    <link rel="preload" href="/static/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/static/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin>
     
     <!-- Critical inline styles for immediate rendering -->
     <style>
@@ -44,6 +95,11 @@
             font-display: swap;
             visibility: visible !important;
             opacity: 1 !important;
+        }
+        
+        /* Tạo class cho font fallback */
+        .font-fallback {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
         }
         
         body, html {

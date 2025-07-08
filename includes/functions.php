@@ -33,7 +33,7 @@ function getCurrentUser() {
     try {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
-        return $stmt->fetch();
+        return sanitizeDataFromDb($stmt->fetch());
     } catch (PDOException $e) {
         // Log error nếu cần thiết
         error_log("Database error in getCurrentUser(): " . $e->getMessage());
@@ -47,6 +47,26 @@ function createSlug($string) {
     $string = preg_replace('/[^a-z0-9\s-]/', '', $string);
     $string = preg_replace('/[\s-]+/', '-', $string);
     return trim($string, '-');
+}
+
+// Hàm xử lý text tiếng Việt để hiển thị đúng
+function sanitizeVietnameseText($text) {
+    if (empty($text)) return '';
+    
+    // Đảm bảo encoding UTF-8
+    if (!mb_check_encoding($text, 'UTF-8')) {
+        $text = mb_convert_encoding($text, 'UTF-8', 'auto');
+    }
+    
+    // Loại bỏ các ký tự không hợp lệ
+    $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text);
+    
+    return $text;
+}
+
+// Hàm hiển thị text an toàn
+function safeEcho($text) {
+    echo sanitizeVietnameseText(htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
 }
 
 // Hàm hiển thị sao đánh giá
@@ -366,4 +386,4 @@ function updateUserAvatar($userId, $avatarUrl) {
         return false;
     }
 }
-?> 
+?>

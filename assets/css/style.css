@@ -15,6 +15,24 @@ body {
     font-family: 'Roboto', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif !important;
 }
 
+/* Vietnamese text handling */
+.vietnamese-text {
+    font-family: 'Roboto', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    font-display: swap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Đảm bảo tiếng Việt hiển thị đúng trong các thẻ quan trọng */
+.card-title, 
+.card-text, 
+h1, h2, h3, h4, h5, h6,
+p, .btn, span, .nav-link {
+    font-family: 'Roboto', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif !important;
+}
+
 /* Font fallback classes */
 .font-fallback,
 .font-fallback * {
@@ -548,4 +566,4 @@ h5, h6 {
         width: 80px !important;
         height: 80px !important;
     }
-} 
+}

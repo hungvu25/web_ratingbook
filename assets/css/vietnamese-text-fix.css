@@ -1,0 +1,69 @@
+/* Vietnamese text fixes - high specificity */
+body .card-title,
+body .book-title,
+body .btn,
+body h1,
+body h2, 
+body h3, 
+body h4, 
+body h5, 
+body h6,
+body p,
+body .author-name,
+body .book-author,
+body .nav-link,
+body .navbar-brand,
+body .text-content,
+body span,
+body div[class*="text"] {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+    unicode-bidi: embed;
+}
+
+/* Card styling để fix lỗi */
+.card {
+    overflow: hidden;
+}
+
+.card-title {
+    font-size: 1rem;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* Fix font weight cho headings */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700 !important;
+}
+
+/* Fix Vietnamese text in buttons */
+.btn {
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Tăng font-weight để text rõ ràng hơn */
+body .book-title,
+body .card-title {
+    font-weight: 700 !important;
+}
+
+/* Tăng contrast cho text */
+body .card-text,
+body .book-author,
+body p {
+    color: #333 !important;
+}
+
+/* Fix cho link */
+a {
+    text-decoration: none !important;
+}

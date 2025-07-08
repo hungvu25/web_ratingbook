@@ -23,7 +23,7 @@ $stmt = $pdo->prepare("
     GROUP BY b.id
 ");
 $stmt->execute([$book_id]);
-$book = $stmt->fetch();
+$book = sanitizeDataFromDb($stmt->fetch());
 
 if (!$book) {
     header('Location: books.php');

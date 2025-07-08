@@ -4,7 +4,7 @@
 /* Roboto Regular */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-Regular.ttf') format('truetype');
+    src: url('../../static/Roboto-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -13,7 +13,7 @@
 /* Roboto Medium */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-Medium.ttf') format('truetype');
+    src: url('../../static/Roboto-Medium.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -22,7 +22,7 @@
 /* Roboto SemiBold */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-SemiBold.ttf') format('truetype');
+    src: url('../../static/Roboto-SemiBold.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -31,7 +31,7 @@
 /* Roboto Bold */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-Bold.ttf') format('truetype');
+    src: url('../../static/Roboto-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -40,7 +40,7 @@
 /* Roboto Italic */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-Italic.ttf') format('truetype');
+    src: url('../../static/Roboto-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
     font-display: swap;
@@ -49,7 +49,7 @@
 /* Roboto Medium Italic */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-MediumItalic.ttf') format('truetype');
+    src: url('../../static/Roboto-MediumItalic.ttf') format('truetype');
     font-weight: 500;
     font-style: italic;
     font-display: swap;
@@ -58,7 +58,7 @@
 /* Roboto Bold Italic */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-BoldItalic.ttf') format('truetype');
+    src: url('../../static/Roboto-BoldItalic.ttf') format('truetype');
     font-weight: 700;
     font-style: italic;
     font-display: swap;
@@ -67,7 +67,7 @@
 /* Roboto Light */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-Light.ttf') format('truetype');
+    src: url('../../static/Roboto-Light.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -76,7 +76,7 @@
 /* Roboto Thin */
 @font-face {
     font-family: 'Roboto';
-    src: url('../static/Roboto-Thin.ttf') format('truetype');
+    src: url('../../static/Roboto-Thin.ttf') format('truetype');
     font-weight: 100;
     font-style: normal;
     font-display: swap;

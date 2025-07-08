@@ -20,7 +20,7 @@ $stmt = $pdo->query("
     ORDER BY avg_rating DESC, review_count DESC
     LIMIT 6
 ");
-$featured_books = $stmt->fetchAll();
+$featured_books = sanitizeDataFromDb($stmt->fetchAll());
 
 // Lấy sách mới nhất
 $stmt = $pdo->query("
@@ -34,7 +34,7 @@ $stmt = $pdo->query("
     ORDER BY b.created_at DESC
     LIMIT 6
 ");
-$latest_books = $stmt->fetchAll();
+$latest_books = sanitizeDataFromDb($stmt->fetchAll());
 
 include 'includes/header.php';
 ?>

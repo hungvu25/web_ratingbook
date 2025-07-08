@@ -1,5 +1,8 @@
     </main>
 
+    <!-- JavaScript xử lý Vietnamese text -->
+    <script src="/assets/js/vietnamese-text.js?v=<?php echo time(); ?>"></script>
+    
     <!-- Footer -->
     <footer class="bg-dark text-light py-4 mt-5">
         <div class="container">

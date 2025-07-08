@@ -28,6 +28,52 @@ i, .fas, .far, .fab, .fal, .fad,
     font-family: "Font Awesome 6 Brands" !important;
 }
 
+/* Fix cho icons cụ thể - thêm vào để đảm bảo hiển thị */
+.fa-book:before {
+    content: "\f02d";
+}
+
+.fa-user:before {
+    content: "\f007";
+}
+
+.fa-star:before {
+    content: "\f005";
+}
+
+.fa-star-half-alt:before {
+    content: "\f5c0";
+}
+
+.fa-tag:before {
+    content: "\f02b";
+}
+
+/* Fix cho icon cuốn sách */
+i.fas.fa-book-open:before,
+.fa-book-open:before {
+    content: "\f518";
+}
+
+/* Chỉnh sửa kích thước icon */
+.icon-md {
+    font-size: 1.25rem !important;
+}
+
+.icon-lg {
+    font-size: 1.5rem !important;
+}
+
+.icon-xl {
+    font-size: 2rem !important;
+}
+
+/* Fix cho số lượng ở phần footer */
+.stats-number {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
 /* Force icon content display */
 .fas::before, .far::before, .fab::before,
 [class^="fa-"]::before, [class*=" fa-"]::before {

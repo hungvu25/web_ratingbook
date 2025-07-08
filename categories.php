@@ -22,7 +22,7 @@ $books = [];
 if ($selected_category > 0) {
     $stmt = $pdo->prepare("SELECT * FROM categories WHERE id = ?");
     $stmt->execute([$selected_category]);
-    $category_info = $stmt->fetch();
+    $category_info = sanitizeDataFromDb($stmt->fetch());
     
     if ($category_info) {
         // Lấy sách thuộc thể loại này
@@ -38,7 +38,7 @@ if ($selected_category > 0) {
             ORDER BY b.created_at DESC
         ");
         $stmt->execute([$selected_category]);
-        $books = $stmt->fetchAll();
+        $books = sanitizeDataFromDb($stmt->fetchAll());
     }
 }
 

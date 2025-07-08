@@ -90,7 +90,7 @@ $stmt = $pdo->prepare("
     ORDER BY r.created_at DESC
 ");
 $stmt->execute([$user['id']]);
-$user_reviews = $stmt->fetchAll();
+$user_reviews = sanitizeDataFromDb($stmt->fetchAll());
 
 include 'includes/header.php';
 ?>

@@ -1,0 +1,64 @@
+/* Vietnamese Font Display Fix */
+
+/* Font properties for Vietnamese text */
+@font-face {
+    font-family: 'Vietnamese';
+    src: local('Roboto'),
+         url('/static/Roboto-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Vietnamese';
+    src: local('Roboto Bold'),
+         url('/static/Roboto-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Fix for specific Vietnamese texts */
+.vietnamese-text,
+.book-title, 
+.author-name, 
+.book-author,
+.card-title,
+.card-text,
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Vietnamese', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    font-synthesis: none;
+}
+
+/* Special handling for book titles */
+.book-title {
+    letter-spacing: -0.01em;
+    word-spacing: 0.05em;
+    font-weight: 700;
+}
+
+/* Vietnamese characters fix */
+[lang="vi"] * {
+    font-feature-settings: "locl" 1;
+}
+
+/* Text-specific fixes */
+.text-reset, .text-muted, .text-dark, .text-white {
+    font-family: inherit !important;
+}
+
+/* Fix issue with card text overflow */
+.card-body {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Special handling for uppercase Vietnamese text */
+.text-uppercase {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}

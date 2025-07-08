@@ -4,6 +4,9 @@
  * Direct configuration without environment variables
  */
 
+// Load charset fix functions
+require_once __DIR__ . '/charset_fix.php';
+
 // Database configuration - Auto-detect environment
 if (isset($_SERVER['HTTP_HOST'])) {
     $host = $_SERVER['HTTP_HOST'];
@@ -89,8 +92,8 @@ try {
     
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
     
-    // Set charset sau khi kết nối
-    $pdo->exec("SET NAMES utf8");
+    // Áp dụng hàm sửa lỗi charset từ charset_fix.php
+    fixDatabaseEncoding($pdo);
     
     define('DB_CONNECTION_TYPE', 'infinityfree');
     

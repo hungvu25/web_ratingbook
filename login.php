@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Tìm user theo username hoặc email
             $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
             $stmt->execute([$username, $username]);
-            $user = $stmt->fetch();
+            $user = sanitizeDataFromDb($stmt->fetch());
             
             if ($user && verifyPassword($password, $user['password'])) {
                 // Đăng nhập thành công
