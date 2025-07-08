@@ -53,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $emailResult = sendVerificationEmail($email, $username, $verificationToken, $full_name);
                     
                     if ($emailResult['success']) {
-                        $success = 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.';
+                        $success = 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.<br><br>';
+                        $success .= 'Nếu bạn không nhận được email, bạn có thể <a href="check-account.php">kiểm tra trạng thái tài khoản tại đây</a>.';
                     } else {
                         // Email gửi không thành công - Hiển thị link xác minh trực tiếp
                         $verificationLink = 'http://' . $_SERVER['HTTP_HOST'] . '/verify-email.php?token=' . $verificationToken . '&email=' . urlencode($email);

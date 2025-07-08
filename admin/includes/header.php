@@ -148,6 +148,13 @@
                 </a>
             </li>
             
+            <li class="nav-item">
+                <a href="email-test.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'email-test.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-paper-plane"></i>
+                    Kiểm tra gửi email
+                </a>
+            </li>
+            
             <hr class="sidebar-divider my-3" style="border-color: rgba(255,255,255,0.2);">
             
             <li class="nav-item">

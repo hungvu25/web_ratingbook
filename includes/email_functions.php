@@ -11,8 +11,17 @@ define('EMAIL_PASSWORD', '#4Vrorcl'); // Replace with your Zoho password or app 
 define('EMAIL_FROM_NAME', 'Book Review Portal'); // Your website name
 define('EMAIL_FROM_ADDRESS', 'account@dichvutot.site'); // Replace with your Zoho email
 
+// Load PHPMailer classes (manual loading without Composer)
+require_once __DIR__ . '/../lib/PHPMailer/Exception.php';
+require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
+require_once __DIR__ . '/../lib/PHPMailer/SMTP.php';
+
+// Import classes into the global namespace
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 /**
- * Send an email using PHP's mail function with Zoho SMTP settings
+ * Send an email using PHPMailer and Zoho Mail
  * 
  * @param string $to Recipient email address
  * @param string $subject Email subject
@@ -21,30 +30,83 @@ define('EMAIL_FROM_ADDRESS', 'account@dichvutot.site'); // Replace with your Zoh
  * @return array Success status and message
  */
 function sendEmail($to, $subject, $body, $altBody = '') {
+    try {
+        // Initialize PHPMailer
+        $mail = new PHPMailer();
+        
+        // Server settings for SMTP
+        $mail->isSMTP();
+        $mail->Host = EMAIL_HOST;
+        $mail->Port = EMAIL_PORT;
+        $mail->SMTPAuth = true;
+        $mail->Username = EMAIL_USERNAME;
+        $mail->Password = EMAIL_PASSWORD;
+        $mail->SMTPSecure = 'tls'; // Use 'ssl' for port 465
+        
+        // Set sender
+        $mail->setFrom(EMAIL_FROM_ADDRESS, EMAIL_FROM_NAME);
+        
+        // Add recipient
+        $mail->addAddress($to);
+        
+        // Set email content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $body;
+        $mail->AltBody = $altBody ?: strip_tags($body);
+        
+        // For debugging - log email attempt
+        error_log("Attempting to send email to: $to, Subject: $subject");
+        
+        // Send the email
+        if ($mail->send()) {
+            error_log("Email to $to was sent successfully via SMTP");
+            return [
+                'success' => true,
+                'message' => 'Email sent successfully'
+            ];
+        } else {
+            error_log("Failed to send email via SMTP: " . $mail->ErrorInfo);
+            
+            // Fallback to PHP's mail() function if SMTP fails
+            return sendEmailFallback($to, $subject, $body);
+        }
+    } catch (Exception $e) {
+        error_log("PHPMailer Exception: " . $e->getMessage());
+        
+        // Fallback to PHP's mail() function if PHPMailer fails
+        return sendEmailFallback($to, $subject, $body);
+    }
+}
+
+/**
+ * Fallback function to send email using PHP's mail function
+ */
+function sendEmailFallback($to, $subject, $body) {
     // Define headers
     $headers = "From: " . EMAIL_FROM_NAME . " <" . EMAIL_FROM_ADDRESS . ">\r\n";
     $headers .= "Reply-To: " . EMAIL_FROM_ADDRESS . "\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-    // For debugging - log email attempt
-    error_log("Attempting to send email to: $to, Subject: $subject");
+    error_log("Attempting to send email using mail() fallback");
     
     // Use PHP's mail function
     $success = mail($to, $subject, $body, $headers);
     
     // Log the result for debugging
     if ($success) {
-        error_log("Email to $to was accepted for delivery");
+        error_log("Email to $to was accepted for delivery via mail()");
         return [
             'success' => true,
-            'message' => 'Email sent successfully'
+            'message' => 'Email sent successfully using fallback method'
         ];
     } else {
-        error_log("Failed to send email to $to: " . error_get_last()['message']);
+        $errorMsg = error_get_last() ? error_get_last()['message'] : 'Unknown error';
+        error_log("Failed to send email via mail(): " . $errorMsg);
         return [
             'success' => false,
-            'message' => 'Không thể gửi email: ' . (error_get_last()['message'] ?? 'Unknown error')
+            'message' => 'Không thể gửi email: ' . $errorMsg
         ];
     }
 }
