@@ -12,7 +12,7 @@
 /* Body padding to prevent navbar overlap */
 body {
     padding-top: 80px !important; /* Same as navbar height */
-    font-family: 'Poppins', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    font-family: 'Roboto', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif !important;
 }
 
 /* Font fallback classes */

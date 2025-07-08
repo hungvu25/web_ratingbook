@@ -1,0 +1,247 @@
+/* Icon Fixes CSS - Khắc phục lỗi icon và font */
+
+/* ===== ICON FIXES ===== */
+
+/* Force Font Awesome icons to display - luôn hiển thị */
+i, .fas, .far, .fab, .fal, .fad, 
+[class^="fa-"], [class*=" fa-"] {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    font-style: normal !important;
+    text-rendering: auto !important;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Specific Font Awesome variants */
+.far {
+    font-weight: 400 !important;
+    font-family: "Font Awesome 6 Free" !important;
+}
+
+.fab {
+    font-weight: 400 !important;
+    font-family: "Font Awesome 6 Brands" !important;
+}
+
+/* Force icon content display */
+.fas::before, .far::before, .fab::before,
+[class^="fa-"]::before, [class*=" fa-"]::before {
+    font-family: inherit !important;
+    font-weight: inherit !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Icon fallbacks với Unicode - chỉ hiển thị khi Font Awesome thật sự fail */
+body.icon-fallback-active .fa-book::before,
+body.icon-fallback-active .fa-book-reader::before { 
+    content: "📚" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-home::before { 
+    content: "🏠" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-star::before { 
+    content: "⭐" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-tags::before { 
+    content: "🏷️" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-user::before,
+body.icon-fallback-active .fa-user-circle::before { 
+    content: "👤" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-sign-in-alt::before { 
+    content: "🔑" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-user-plus::before { 
+    content: "➕" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-sign-out-alt::before { 
+    content: "🚪" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-cog::before { 
+    content: "⚙️" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-comments::before { 
+    content: "💬" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-calendar::before { 
+    content: "📅" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-paper-plane::before { 
+    content: "✈️" !important; 
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active .fa-bookmark::before { 
+    content: "🔖" !important; 
+    font-family: inherit !important;
+}
+
+/* Ẩn Font Awesome icons khi fallback active để tránh duplicate */
+body.icon-fallback-active i[class*="fa-"]::before {
+    font-family: inherit !important;
+}
+
+body.icon-fallback-active i[class*="fa-"] {
+    font-family: inherit !important;
+    font-weight: normal !important;
+}
+
+/* ===== FONT PRIORITY FIXES ===== */
+
+/* High priority Roboto application */
+body.roboto-loaded,
+html.roboto-loaded body,
+html.roboto-loaded body * {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Specific elements with font priority */
+h1, h2, h3, h4, h5, h6,
+.card-title, .navbar-brand,
+.btn, .badge {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-weight: 600 !important;
+}
+
+/* Book title specific fix */
+.book-title, 
+h2.fw-bold,
+.card-title {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: inherit !important;
+    line-height: 1.3 !important;
+}
+
+/* Author and metadata text */
+.text-muted,
+.text-muted strong {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-weight: 500 !important;
+}
+
+/* Rating and review text */
+.rating-stars,
+.rating-stars span {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-weight: 400 !important;
+}
+
+/* Description text */
+p, .card-text,
+.description-text {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+}
+
+/* ===== LOADING STATE OVERRIDES ===== */
+
+/* Force immediate visibility during font loading */
+.font-loading-roboto *,
+.font-loading *,
+body.font-loading-roboto *,
+body.font-loading * {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Icon visibility during loading */
+.font-loading-roboto i,
+.font-loading i,
+body.font-loading-roboto i,
+body.font-loading i {
+    font-family: "Font Awesome 6 Free", "FontAwesome", serif !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ===== EMERGENCY OVERRIDES ===== */
+
+/* Ultimate fallback for worst case scenarios */
+html {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+}
+
+/* Force text visibility regardless of font loading state */
+* {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Icon emergency fallback */
+i[class*="fa-"]:empty {
+    display: inline-block !important;
+    width: auto !important;
+    text-align: center !important;
+}
+
+i[class*="fa-"]:empty::before {
+    content: "•" !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-size: 0.8em !important;
+    opacity: 0.7 !important;
+}
+
+/* ===== RESPONSIVE FIXES ===== */
+
+@media (max-width: 768px) {
+    /* Mobile font adjustments */
+    h1, h2, .card-title {
+        font-size: 1.4rem !important;
+        line-height: 1.3 !important;
+    }
+    
+    .text-muted {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Mobile icon adjustments */
+    i[class*="fa-"] {
+        font-size: 1rem !important;
+    }
+}
+
+/* ===== PRINT SUPPORT ===== */
+
+@media print {
+    i[class*="fa-"]::before {
+        content: " [icon] " !important;
+        font-family: serif !important;
+    }
+    
+    * {
+        font-family: 'Roboto', serif !important;
+    }
+} 

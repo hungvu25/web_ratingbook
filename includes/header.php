@@ -6,26 +6,32 @@
     <title><?php echo isset($page_title) ? htmlspecialchars($page_title) . ' - ' . SITE_NAME : SITE_NAME; ?></title>
     <meta name="description" content="<?php echo SITE_DESCRIPTION; ?>">
     
-    <!-- Preload critical resources cho CDN -->
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     
-    <!-- CRITICAL: Local Fonts FIRST để tránh FOUT -->
-    <link href="assets/css/local-fonts.css?v=<?php echo time(); ?>" rel="stylesheet">
+    <!-- Preload Font Awesome -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'";
     
-    <!-- Font Awesome Local Fallback -->
-    <link href="assets/css/fontawesome-local.css?v=<?php echo time(); ?>" rel="stylesheet">
+    <!-- Roboto Local Font CSS - Load first -->
+    <link href="assets/css/roboto-local.css?v=<?php echo time(); ?>" rel="stylesheet">
     
-    <!-- Font Fallback CSS - Enhanced system -->
+    <!-- Font Fallback CSS - MUST load second để tránh FOUT -->
     <link href="assets/css/font-fallback.css?v=<?php echo time(); ?>" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome CDN với fallback detection -->
-    <link id="fontawesome-cdn" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    <!-- Font Awesome - load with high priority -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Icon Fixes CSS - load after Font Awesome -->
+    <link href="assets/css/icon-fixes.css?v=<?php echo time(); ?>" rel="stylesheet">
+    
+    <!-- Fix Duplicate Icons Script - Load immediately after Font Awesome -->
+    <script src="fix-duplicate-icons.js?v=<?php echo time(); ?>"></script>
     
     <!-- Custom CSS -->
     <link href="assets/css/style.css?v=<?php echo time(); ?>" rel="stylesheet">
@@ -34,7 +40,7 @@
     <style>
         /* CRITICAL: Đảm bảo text và icon hiển thị ngay lập tức */
         *, *::before, *::after {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Arial', sans-serif !important;
             font-display: swap;
             visibility: visible !important;
             opacity: 1 !important;
@@ -46,31 +52,29 @@
             font-family: inherit !important;
         }
         
-        /* Force icon visibility với local fonts */
+        /* Force icon visibility - hiển thị ngay lập tức */
         i, .fas, .far, .fab, [class*="fa-"] {
             visibility: visible !important;
             opacity: 1 !important;
             font-family: "Font Awesome 6 Free", "FontAwesome", serif !important;
+            display: inline-block !important;
+            font-weight: 900 !important;
         }
         
-        /* Icon fallback for worst case */
-        .fa-icon-fallback i[class*="fa-"]:empty::before {
+        /* Specific variants */
+        .far {
+            font-weight: 400 !important;
+        }
+        
+        .fab {
+            font-family: "Font Awesome 6 Brands" !important;
+            font-weight: 400 !important;
+        }
+        
+        /* Icon fallback */
+        i[class*="fa-"]:empty::before {
             content: "•";
             font-family: inherit !important;
-        }
-        
-        /* Status indicators for debugging */
-        .font-status {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            z-index: 9999;
-            display: none; /* Ẩn trong production */
         }
         
         /* Loading state - vẫn hiển thị text */
@@ -170,65 +174,75 @@
             }
         }
         
+        /* CRITICAL: Force Roboto on all elements immediately with highest specificity */
+        html, body, *, *::before, *::after,
+        html.roboto-loaded *, html.roboto-loaded body *,
+        body.roboto-loaded *, .roboto-loaded * {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+        }
+        
         /* Force immediate visibility for all common elements */
         .navbar, .navbar *, .hero-section, .hero-section *, 
         .book-card, .book-card *, .btn, .btn *, 
         h1, h2, h3, h4, h5, h6, p, span, div, a {
             visibility: visible !important;
             opacity: 1 !important;
-            font-family: inherit !important;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+        }
+        
+        /* Specific font weights for immediate application */
+        h1, h2, .fw-bold, .card-title, .navbar-brand { 
+            font-weight: 700 !important; 
+        }
+        .text-muted, .card-text { 
+            font-weight: 400 !important; 
         }
     </style>
     
-    <!-- Enhanced Font Handler - Load early -->
+    <!-- Error Handler - Load first -->
+    <script src="assets/js/error-handler.js?v=<?php echo time(); ?>"></script>
+    
+    <!-- Roboto Font Handler - Load early -->
     <script>
-        // Immediate font fallback setup
-        document.documentElement.style.fontFamily = "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Arial', sans-serif";
+        // Immediate font fallback with Roboto priority
+        document.documentElement.style.fontFamily = '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Arial", sans-serif';
         document.documentElement.style.visibility = 'visible';
         document.documentElement.style.opacity = '1';
         
-        // Set loading state
-        document.documentElement.classList.add('fonts-loading');
-        
-        // CDN Fallback checker
-        window.checkCDNStatus = function() {
-            // Check if Font Awesome CDN loaded
-            const testIcon = document.createElement('i');
-            testIcon.className = 'fas fa-home';
-            testIcon.style.position = 'absolute';
-            testIcon.style.left = '-9999px';
-            document.body.appendChild(testIcon);
+        // Force apply to body and all elements
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.fontFamily = '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+            document.body.classList.add('roboto-loaded');
+            document.documentElement.classList.add('roboto-loaded');
             
-            const iconWidth = testIcon.offsetWidth;
-            document.body.removeChild(testIcon);
+            // Apply to all existing elements
+            const allElements = document.querySelectorAll('*');
+            allElements.forEach(el => {
+                el.style.fontFamily = '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+            });
             
-            // If CDN failed, add fallback class
-            if (iconWidth < 10) {
-                console.log('🔄 Font Awesome CDN failed, using local fallback');
-                document.documentElement.classList.add('fa-cdn-failed');
-                
-                // Remove CDN link to prevent further loading attempts
-                const cdnLink = document.getElementById('fontawesome-cdn');
-                if (cdnLink) cdnLink.remove();
-            } else {
-                console.log('✅ Font Awesome CDN loaded successfully');
-                document.documentElement.classList.add('fa-cdn-loaded');
-            }
-        };
+            console.log('🎯 Roboto applied immediately to all elements');
+        });
         
-        // Check CDN status after page load
-        window.addEventListener('load', function() {
-            setTimeout(checkCDNStatus, 1000);
+        // Force icons to be visible
+        document.addEventListener('DOMContentLoaded', function() {
+            const icons = document.querySelectorAll('i[class*="fa-"]');
+            icons.forEach(icon => {
+                icon.style.fontFamily = '"Font Awesome 6 Free"';
+                icon.style.visibility = 'visible';
+                icon.style.opacity = '1';
+                icon.style.display = 'inline-block';
+            });
+            console.log('🎯 Icons forced visible:', icons.length);
         });
     </script>
-    <script src="assets/js/font-handler.js?v=<?php echo time(); ?>" defer></script>
-</head>
-<body class="font-loading">
-    <!-- Font Status Indicator (Development only) -->
-    <div id="fontStatus" class="font-status">
-        Loading fonts...
-    </div>
 
+    <script src="assets/js/roboto-handler.js?v=<?php echo time(); ?>" defer></script>
+    <script src="assets/js/font-handler.js?v=<?php echo time(); ?>" defer></script>
+    <!-- Tạm thời tắt icon-fallback để debug -->
+    <!-- <script src="assets/js/icon-fallback.js?v=<?php echo time(); ?>" defer></script> -->
+</head>
+<body class="font-loading-roboto">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
@@ -270,7 +284,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-1"></i>
-                                Xin chào, <?php echo htmlspecialchars($_SESSION['username']); ?>
+                                Xin chào, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'User'); ?>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="profile.php">
@@ -283,7 +297,7 @@
                                     <i class="fas fa-bookmark me-2"></i>Danh sách đọc
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                                <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
                                     <li><a class="dropdown-item" href="admin/">
                                         <i class="fas fa-cog me-2"></i>Quản trị
                                     </a></li>
@@ -315,4 +329,4 @@
         <?php displayFlashMessage(); ?>
     </main>
 </body>
-</html> 
+</html>
