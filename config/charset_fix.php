@@ -28,6 +28,9 @@ function fixDatabaseEncoding($pdo) {
         // Đặt collation để hỗ trợ đầy đủ Unicode và tiếng Việt
         $pdo->exec("SET collation_connection = utf8mb4_unicode_ci");
         $pdo->exec("SET SESSION collation_connection = utf8mb4_unicode_ci");
+        
+        // Thêm cài đặt cho TIMESTAMP sử dụng đúng timezone
+        $pdo->exec("SET time_zone = '+07:00'");
     } catch (PDOException $e) {
         // Ghi log lỗi nếu cần
         if (defined('ENVIRONMENT') && ENVIRONMENT === 'development') {

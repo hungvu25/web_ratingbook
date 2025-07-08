@@ -1,6 +1,7 @@
 <?php
 require_once 'config/database.php';
 require_once 'includes/functions.php';
+require_once 'includes/email_functions.php';
 
 $page_title = 'Đăng ký tài khoản';
 $error = '';
@@ -37,15 +38,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $verificationToken = bin2hex(random_bytes(32));
                 
                 $stmt = $pdo->prepare("
-                    INSERT INTO users (username, name, full_name, email, password, verification_token, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, NOW())
+                    INSERT INTO users (username, name, full_name, email, password, verification_token, created_at, is_verified) 
+                    VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)
                 ");
                 
                 if ($stmt->execute([$username, $full_name, $full_name, $email, $hashedPassword, $verificationToken])) {
-                    $success = 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.';
+                    // Get the newly created user ID
+                    $newUserId = $pdo->lastInsertId();
                     
                     // Log activity
                     logActivity('user_registered', "New user: $username");
+                    
+                    // Gửi email xác minh
+                    $emailResult = sendVerificationEmail($email, $username, $verificationToken, $full_name);
+                    
+                    if ($emailResult['success']) {
+                        $success = 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.';
+                    } else {
+                        // Email gửi không thành công - Hiển thị link xác minh trực tiếp
+                        $verificationLink = 'http://' . $_SERVER['HTTP_HOST'] . '/verify-email.php?token=' . $verificationToken . '&email=' . urlencode($email);
+                        
+                        $success = 'Đăng ký thành công! Tuy nhiên, có lỗi khi gửi email xác thực.<br><br>';
+                        $success .= 'Bạn có thể xác minh tài khoản bằng cách nhấp vào liên kết sau:<br><br>';
+                        $success .= '<a href="' . $verificationLink . '" class="btn btn-primary">Xác minh tài khoản</a>';
+                        
+                        error_log('Email verification failed: ' . $emailResult['message']);
+                    }
                 } else {
                     $error = 'Có lỗi xảy ra khi đăng ký';
                 }

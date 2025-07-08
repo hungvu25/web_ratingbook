@@ -141,6 +141,13 @@
                 </a>
             </li>
             
+            <li class="nav-item">
+                <a href="manual-email.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'manual-email.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-envelope"></i>
+                    Gửi email xác minh
+                </a>
+            </li>
+            
             <hr class="sidebar-divider my-3" style="border-color: rgba(255,255,255,0.2);">
             
             <li class="nav-item">

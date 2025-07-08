@@ -19,6 +19,7 @@ if (isset($_SERVER['HTTP_HOST'])) {
         define('DB_USER', 'root');
         define('DB_PASS', ''); // XAMPP default
         define('DB_CHARSET', 'utf8mb4');
+        define('DB_COLLATION', 'utf8mb4_unicode_ci');
         if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'development');
     } else {
         // InfinityFree production configuration
@@ -27,7 +28,8 @@ if (isset($_SERVER['HTTP_HOST'])) {
         define('DB_NAME', 'if0_39381228_webbook');
         define('DB_USER', 'if0_39381228');
         define('DB_PASS', 'oi14KDGIotsJiP');
-        define('DB_CHARSET', 'utf8');
+        define('DB_CHARSET', 'utf8mb4');
+        define('DB_COLLATION', 'utf8mb4_unicode_ci');
         if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'production');
     }
 } else {
@@ -37,7 +39,8 @@ if (isset($_SERVER['HTTP_HOST'])) {
     define('DB_NAME', 'if0_39381228_webbook');
     define('DB_USER', 'if0_39381228');
     define('DB_PASS', 'oi14KDGIotsJiP');
-    define('DB_CHARSET', 'utf8');
+    define('DB_CHARSET', 'utf8mb4');
+    define('DB_COLLATION', 'utf8mb4_unicode_ci');
     if (!defined('ENVIRONMENT')) define('ENVIRONMENT', 'production');
 }
 
@@ -87,7 +90,8 @@ try {
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
-        PDO::ATTR_TIMEOUT => 60, // Tăng timeout lên 60s
+        PDO::ATTR_TIMEOUT            => 60, // Tăng timeout lên 60s
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
     ];
     
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);

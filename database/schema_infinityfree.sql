@@ -1,6 +1,9 @@
 -- Schema cho InfinityFree Database
 -- Bỏ dòng USE database vì sẽ chọn database trực tiếp trong phpMyAdmin
 
+-- Thiết lập character set và collation mặc định
+SET NAMES utf8mb4;
+
 -- Bảng người dùng
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -16,7 +19,7 @@ CREATE TABLE users (
     email_verified_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Bảng thể loại sách
 CREATE TABLE categories (
@@ -24,7 +27,7 @@ CREATE TABLE categories (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Bảng sách
 CREATE TABLE books (
@@ -39,7 +42,7 @@ CREATE TABLE books (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Bảng đánh giá
 CREATE TABLE reviews (
@@ -53,7 +56,7 @@ CREATE TABLE reviews (
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE KEY unique_user_book (user_id, book_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Thêm dữ liệu mẫu
 INSERT INTO categories (name, description) VALUES

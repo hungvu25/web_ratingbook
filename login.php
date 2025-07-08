@@ -31,19 +31,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = sanitizeDataFromDb($stmt->fetch());
             
             if ($user && verifyPassword($password, $user['password'])) {
-                // Đăng nhập thành công
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_role'] = $user['role'];
-                $_SESSION['user_name'] = $user['full_name'] ?? $user['username'];
-                
-                // Log activity
-                logActivity('user_login', "User logged in: {$user['username']}");
-                
-                // Redirect theo role
-                if ($user['role'] === 'admin') {
-                    redirectWithMessage('admin/dashboard.php', 'Chào mừng Admin!', 'success');
+                // Kiểm tra xem tài khoản đã xác minh email chưa (trừ tài khoản admin)
+                if (($user['is_verified'] == 1) || ($user['role'] === 'admin')) {
+                    // Đăng nhập thành công
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_role'] = $user['role'];
+                    $_SESSION['user_name'] = $user['full_name'] ?? $user['username'];
+                    
+                    // Log activity
+                    logActivity('user_login', "User logged in: {$user['username']}");
+                    
+                    // Redirect theo role
+                    if ($user['role'] === 'admin') {
+                        redirectWithMessage('admin/dashboard.php', 'Chào mừng Admin!', 'success');
+                    } else {
+                        redirectWithMessage('index.php', 'Đăng nhập thành công!', 'success');
+                    }
                 } else {
-                    redirectWithMessage('index.php', 'Đăng nhập thành công!', 'success');
+                    // Tài khoản chưa xác minh email
+                    $error = 'Tài khoản chưa được xác minh. Vui lòng kiểm tra email để xác minh tài khoản.';
                 }
             } else {
                 $error = 'Tên đăng nhập hoặc mật khẩu không đúng';
@@ -132,6 +138,12 @@ include 'includes/header.php';
                                 Quên mật khẩu?
                             </a>
                         </p>
+                        <p class="mb-2">
+                            <a href="check-account.php" class="text-decoration-none">
+                                <i class="fas fa-user-check me-1"></i>
+                                Kiểm tra trạng thái xác minh tài khoản
+                            </a>
+                        </p>
                     </div>
                 </div>
                 <div class="card-footer text-center bg-light">
@@ -142,26 +154,6 @@ include 'includes/header.php';
                             Đăng ký ngay
                         </a>
                     </p>
-                </div>
-            </div>
-            
-            <!-- Demo accounts info -->
-            <div class="card mt-4 border-info">
-                <div class="card-header bg-info text-white">
-                    <h6 class="mb-0">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Tài khoản demo
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <p class="mb-2"><strong>Admin:</strong></p>
-                    <ul class="list-unstyled mb-3">
-                        <li>Username: <code>admin</code></li>
-                        <li>Password: <code>admin123</code></li>
-                    </ul>
-                    <small class="text-muted">
-                        Sử dụng tài khoản này để truy cập trang quản trị
-                    </small>
                 </div>
             </div>
         </div>
